@@ -16,15 +16,15 @@ pub fn run(population: &mut LettersCollection, context: &Context) -> Result<Lett
 
     mutants.append(population);
 
-    let children: LettersCollection = mutants
+    let children: Vec<_> = mutants
         .into_iter()
         .unique()
         .sorted_by(score_cmp)
         .group_by(|x| x.parent_version.clone())
         .into_iter()
         .map(|(_, group)| group.collect())
-        .collect::<Vec<LettersCollection>>()
-        .into_par_iter()
+        .collect::<Vec<_>>()
+        .into_par_iter() // enables parallel execution
         .flat_map(|group| cross(group, context))
         .collect::<LettersCollection>()
         .into_iter()
