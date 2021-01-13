@@ -5,18 +5,18 @@ use rayon::prelude::*;
 use std::cmp::Ordering;
 
 pub fn run(population: &mut LettersCollection, context: &Context) -> Result<LettersCollection, ()> {
-    let mut mutants: LettersCollection = population
+    let mut mutants: Vec<_> = population
         .into_par_iter()
         .flat_map(|parent| {
             (0..context.children_count)
                 .map(|_| parent.mutate(context))
-                .collect::<LettersCollection>()
+                .collect::<Vec<_>>()
         })
-        .collect();
+        .collect::<Vec<_>>();
 
     mutants.append(population);
 
-    let children: Vec<_> = mutants
+    let offspring: Vec<_> = mutants
         .into_iter()
         .unique()
         .sorted_by(score_cmp)
@@ -24,8 +24,8 @@ pub fn run(population: &mut LettersCollection, context: &Context) -> Result<Lett
         .into_iter()
         .map(|(_, group)| group.collect())
         .collect::<Vec<_>>()
-        .into_par_iter() // enables parallel execution
-        .flat_map(|group| cross(group, context))
+        .into_par_iter()
+        .flat_map(|group| recombine(group, context))
         .collect::<LettersCollection>()
         .into_iter()
         .unique()
@@ -34,11 +34,11 @@ pub fn run(population: &mut LettersCollection, context: &Context) -> Result<Lett
         .take(context.population_size)
         .collect();
 
-    if children.len() == 0 {
+    if offspring.len() == 0 {
         return Err(());
     }
 
-    Ok(children)
+    Ok(offspring)
 }
 
 fn score_cmp(a: &LettersPointer, b: &LettersPointer) -> Ordering {
@@ -48,7 +48,7 @@ fn score_cmp(a: &LettersPointer, b: &LettersPointer) -> Ordering {
     b_total.partial_cmp(&a_total).unwrap()
 }
 
-fn cross(collection: LettersCollection, context: &Context) -> LettersCollection {
+fn recombine(collection: LettersCollection, context: &Context) -> LettersCollection {
     if collection.len() == 1 {
         return collection;
     }

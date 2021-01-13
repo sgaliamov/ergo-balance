@@ -17,14 +17,15 @@
       "label": "Publish"
     },
     {
-      "type": "cargo",
-      "subcommand": "build",
+      "type": "shell",
+      "command": "cargo",
+      "args": ["+nightly", "build", "-Z", "unstable-options"],
       "problemMatcher": ["$rustc"],
       "group": {
-        "kind": "build",
-        "isDefault": true
+        "isDefault": true,
+        "kind": "build"
       },
-      "label": "Default build"
+      "label": "Build"
     },
     {
       "type": "cargo",
