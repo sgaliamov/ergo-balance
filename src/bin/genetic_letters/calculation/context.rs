@@ -1,7 +1,7 @@
 use ed_balance::models::{CliSettings, Digraphs};
 use std::collections::HashSet;
 
-pub struct Context {
+pub struct LettersContext {
     pub digraphs: Digraphs,
     pub frozen_left: HashSet<char>,
     pub frozen_right: HashSet<char>,
@@ -14,7 +14,7 @@ pub struct Context {
     pub repeats_count: u16,
 }
 
-impl Context {
+impl LettersContext {
     pub fn new(settings: &CliSettings) -> Self {
         let digraphs = Digraphs::load(&settings.digraphs).unwrap();
 
@@ -24,7 +24,7 @@ impl Context {
         let mut frozen_right = HashSet::with_capacity(settings.frozen_right.len());
         frozen_right.extend(settings.frozen_right.chars());
 
-        Context {
+        LettersContext {
             digraphs,
             frozen_left,
             frozen_right,
@@ -39,7 +39,7 @@ impl Context {
     }
 
     pub fn default(digraphs: Digraphs) -> Self {
-        Context {
+        LettersContext {
             digraphs,
             frozen_left: HashSet::new(),
             frozen_right: HashSet::new(),

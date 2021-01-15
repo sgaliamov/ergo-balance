@@ -1,10 +1,10 @@
 // use itertools::Itertools;
 // use rayon::prelude::*;
-use std::{cmp::Ordering, collections::HashSet};
+// use std::{cmp::Ordering, collections::HashSet};
 
-pub trait Individual<T> {
-    fn score_cmp(a: &Box<T>, b: &Box<T>) -> Ordering;
-}
+// pub trait Individual<T> {
+//     fn score_cmp(a: &Box<T>, b: &Box<T>) -> Ordering;
+// }
 
 // pub trait Context {
 //       fn  get_frozen_left()->  HashSet<char>;

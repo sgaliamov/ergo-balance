@@ -6,7 +6,7 @@ use chrono::prelude::*;
 use ed_balance::models::{format_result, CliSettings, DynError};
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use letters::{Letters, LettersCollection};
-use context::Context;
+use context::LettersContext;
 use std::{sync::Arc, thread};
 
 pub fn run(settings: CliSettings) -> Result<(), DynError> {
@@ -31,7 +31,7 @@ pub fn run(settings: CliSettings) -> Result<(), DynError> {
 
     let settings = Arc::clone(&settings);
     let _ = thread::spawn(move || {
-        let context = Context::new(&settings);
+        let context = LettersContext::new(&settings);
 
         let mut population = (0..context.population_size)
             .into_iter()
@@ -75,7 +75,7 @@ fn need_to_continue(
     mut repeats: u16,
     prev_result: LettersCollection,
     population: &LettersCollection,
-    context: &Context,
+    context: &LettersContext,
 ) -> Option<(u16, LettersCollection)> {
     let top_results: Vec<_> = population
         .iter()
@@ -102,7 +102,7 @@ fn render_progress(
     pb_main: &ProgressBar,
     pb_letters: &Vec<ProgressBar>,
     population: &LettersCollection,
-    context: &Context,
+    context: &LettersContext,
 ) -> Option<DateTime<Utc>> {
     let passed = Utc::now() - prev;
 

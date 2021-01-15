@@ -1,5 +1,5 @@
-use super::context::Context;
-use ed_balance::{get_version, Digraphs};
+use super::context::LettersContext;
+use ed_balance::{get_score, get_version, Digraphs};
 use itertools::{min, Itertools};
 use rand::{prelude::SliceRandom, thread_rng};
 use std::hash::Hash;
@@ -91,7 +91,7 @@ impl Letters {
         })
     }
 
-    pub fn new(context: &Context) -> LettersPointer {
+    pub fn new(context: &LettersContext) -> LettersPointer {
         let mut all = ('a'..='z')
             .filter(|&x| !context.frozen_right.contains(&x))
             .filter(|&x| !context.frozen_left.contains(&x))
@@ -131,7 +131,14 @@ impl Letters {
         )
     }
 
-    pub fn cross(&self, partner_mutations: &Vec<Mutation>, context: &Context) -> LettersPointer {
+    pub fn get_score(&self) -> f64 {
+        get_score(self.left_score, self.right_score)
+    }
+    pub fn cross(
+        &self,
+        partner_mutations: &Vec<Mutation>,
+        context: &LettersContext,
+    ) -> LettersPointer {
         let mut left = self.parent_left.clone();
         let mut right = self.parent_right.clone();
         let mut mutations: Vec<_> = self
@@ -169,7 +176,7 @@ impl Letters {
         )
     }
 
-    pub fn mutate(&self, context: &Context) -> LettersPointer {
+    pub fn mutate(&self, context: &LettersContext) -> LettersPointer {
         let mut rng = thread_rng();
 
         let mut left = self
@@ -234,7 +241,7 @@ pub mod tests {
     fn unique_should_work() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let context = Context::default(digraphs);
+        let context = LettersContext::default(digraphs);
         let a = Letters::new(&context);
         let b = Letters::new(&context);
         let clone = a.clone();
@@ -249,7 +256,7 @@ pub mod tests {
     fn should_assign_parent_version() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let mut context = Context::default(digraphs);
+        let mut context = LettersContext::default(digraphs);
         context.mutations_count = 1;
 
         let target = Letters::new(&context);
@@ -262,7 +269,7 @@ pub mod tests {
     fn should_not_mutate_source_object() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let context = Context::default(digraphs);
+        let context = LettersContext::default(digraphs);
         let target = Letters::new(&context);
         let copy = target.left.clone();
         let actual = target.mutate(&context);
@@ -275,7 +282,7 @@ pub mod tests {
     fn should_mutate() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let context = Context::default(digraphs);
+        let context = LettersContext::default(digraphs);
         let target = Letters::new(&context);
 
         let actual = target.mutate(&context);
@@ -288,7 +295,7 @@ pub mod tests {
     fn should_sort_chars() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let context = Context::default(digraphs);
+        let context = LettersContext::default(digraphs);
         let letters = Letters::new(&context);
 
         let target = to_sorted_string(&letters.left);

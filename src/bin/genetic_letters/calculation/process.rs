@@ -1,13 +1,12 @@
 use super::{
-    context::Context,
+    context::LettersContext,
     letters::{LettersCollection, LettersPointer},
 };
-use ed_balance::get_score;
 use itertools::Itertools;
 use rayon::prelude::*;
 use std::cmp::Ordering;
 
-pub fn run(population: &mut LettersCollection, context: &Context) -> Result<LettersCollection, ()> {
+pub fn run(population: &mut LettersCollection, context: &LettersContext) -> Result<LettersCollection, ()> {
     let mut mutants: Vec<_> = population
         .into_par_iter()
         .flat_map(|parent| {
@@ -45,13 +44,13 @@ pub fn run(population: &mut LettersCollection, context: &Context) -> Result<Lett
 }
 
 fn score_cmp(a: &LettersPointer, b: &LettersPointer) -> Ordering {
-    let a_total = get_score(a.left_score, a.right_score);
-    let b_total = get_score(b.left_score, b.right_score);
+    let a_total = a.get_score();
+    let b_total = b.get_score();
 
     b_total.partial_cmp(&a_total).unwrap()
 }
 
-fn recombine(collection: LettersCollection, context: &Context) -> LettersCollection {
+fn recombine(collection: LettersCollection, context: &LettersContext) -> LettersCollection {
     if collection.len() == 1 {
         return collection;
     }
