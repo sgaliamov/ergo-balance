@@ -234,14 +234,31 @@ fn box_letters(letters: Letters) -> LettersPointer {
 
 #[cfg(test)]
 pub mod tests {
+
     use super::*;
     use serde_json::json;
+    use std::collections::HashSet;
+
+    fn default_context(digraphs: Digraphs) -> LettersContext {
+        LettersContext {
+            digraphs,
+            frozen_left: HashSet::new(),
+            frozen_right: HashSet::new(),
+            mutations_count: 4,
+            population_size: 10,
+            children_count: 10,
+            generations_count: 10,
+            results_count: 10,
+            left_count: 15,
+            repeats_count: 10,
+        }
+    }
 
     #[test]
     fn unique_should_work() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let context = LettersContext::default(digraphs);
+        let context = default_context(digraphs);
         let a = Letters::new(&context);
         let b = Letters::new(&context);
         let clone = a.clone();
@@ -256,7 +273,7 @@ pub mod tests {
     fn should_assign_parent_version() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let mut context = LettersContext::default(digraphs);
+        let mut context = default_context(digraphs);
         context.mutations_count = 1;
 
         let target = Letters::new(&context);
@@ -269,7 +286,7 @@ pub mod tests {
     fn should_not_mutate_source_object() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let context = LettersContext::default(digraphs);
+        let context = default_context(digraphs);
         let target = Letters::new(&context);
         let copy = target.left.clone();
         let actual = target.mutate(&context);
@@ -282,7 +299,7 @@ pub mod tests {
     fn should_mutate() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let context = LettersContext::default(digraphs);
+        let context = default_context(digraphs);
         let target = Letters::new(&context);
 
         let actual = target.mutate(&context);
@@ -295,7 +312,7 @@ pub mod tests {
     fn should_sort_chars() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let context = LettersContext::default(digraphs);
+        let context = default_context(digraphs);
         let letters = Letters::new(&context);
 
         let target = to_sorted_string(&letters.left);

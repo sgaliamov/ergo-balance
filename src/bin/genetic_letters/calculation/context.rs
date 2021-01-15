@@ -37,19 +37,4 @@ impl LettersContext {
             repeats_count: settings.repeats_count,
         }
     }
-
-    pub fn default(digraphs: Digraphs) -> Self {
-        LettersContext {
-            digraphs,
-            frozen_left: HashSet::new(),
-            frozen_right: HashSet::new(),
-            mutations_count: 4,
-            population_size: 10,
-            children_count: 10,
-            generations_count: 10,
-            results_count: 10,
-            left_count: 15,
-            repeats_count: 10,
-        }
-    }
 }
