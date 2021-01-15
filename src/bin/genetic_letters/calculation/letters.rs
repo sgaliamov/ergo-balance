@@ -1,7 +1,8 @@
-use ed_balance::models::{get_score, get_version, Context, Digraphs, Individual};
+use super::context::Context;
+use ed_balance::{get_version, Digraphs};
 use itertools::{min, Itertools};
 use rand::{prelude::SliceRandom, thread_rng};
-use std::{cmp::Ordering, hash::Hash};
+use std::hash::Hash;
 
 pub type LettersPointer = Box<Letters>;
 
@@ -217,15 +218,6 @@ impl Letters {
             self.right.clone(),
             &context.digraphs,
         )
-    }
-}
-
-impl Individual<Letters> for Letters {
-    fn score_cmp(a: &LettersPointer, b: &LettersPointer) -> Ordering {
-        let a_total = get_score(a.left_score, a.right_score);
-        let b_total = get_score(b.left_score, b.right_score);
-
-        b_total.partial_cmp(&a_total).unwrap()
     }
 }
 

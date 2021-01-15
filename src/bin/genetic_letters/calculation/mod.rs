@@ -1,10 +1,12 @@
 mod letters;
 mod process;
+mod context;
 
 use chrono::prelude::*;
-use ed_balance::models::{format_result, CliSettings, Context, DynError};
+use ed_balance::models::{format_result, CliSettings, DynError};
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use letters::{Letters, LettersCollection};
+use context::Context;
 use std::{sync::Arc, thread};
 
 pub fn run(settings: CliSettings) -> Result<(), DynError> {

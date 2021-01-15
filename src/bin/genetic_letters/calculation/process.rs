@@ -1,7 +1,11 @@
-use super::letters::{Letters, LettersCollection};
-use ed_balance::models::{Context, Individual};
+use super::{
+    context::Context,
+    letters::{LettersCollection, LettersPointer},
+};
+use ed_balance::get_score;
 use itertools::Itertools;
 use rayon::prelude::*;
+use std::cmp::Ordering;
 
 pub fn run(population: &mut LettersCollection, context: &Context) -> Result<LettersCollection, ()> {
     let mut mutants: Vec<_> = population
@@ -18,7 +22,7 @@ pub fn run(population: &mut LettersCollection, context: &Context) -> Result<Lett
     let offspring: Vec<_> = mutants
         .into_iter()
         .unique()
-        .sorted_by(Letters::score_cmp)
+        .sorted_by(score_cmp)
         .group_by(|x| x.parent_version.clone())
         .into_iter()
         .map(|(_, group)| group.collect())
@@ -28,7 +32,7 @@ pub fn run(population: &mut LettersCollection, context: &Context) -> Result<Lett
         .collect::<LettersCollection>()
         .into_iter()
         .unique()
-        .sorted_by(Letters::score_cmp)
+        .sorted_by(score_cmp)
         .into_iter()
         .take(context.population_size)
         .collect();
@@ -38,6 +42,13 @@ pub fn run(population: &mut LettersCollection, context: &Context) -> Result<Lett
     }
 
     Ok(offspring)
+}
+
+fn score_cmp(a: &LettersPointer, b: &LettersPointer) -> Ordering {
+    let a_total = get_score(a.left_score, a.right_score);
+    let b_total = get_score(b.left_score, b.right_score);
+
+    b_total.partial_cmp(&a_total).unwrap()
 }
 
 fn recombine(collection: LettersCollection, context: &Context) -> LettersCollection {
