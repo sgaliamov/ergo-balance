@@ -1,12 +1,13 @@
+mod context;
 mod letters;
 mod process;
-mod context;
 
 use chrono::prelude::*;
+use context::LettersContext;
 use ed_balance::models::{format_result, CliSettings, DynError};
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use letters::{Letters, LettersCollection};
-use context::LettersContext;
+use process::GeneticAlgorithm;
 use std::{sync::Arc, thread};
 
 pub fn run(settings: CliSettings) -> Result<(), DynError> {
@@ -32,6 +33,7 @@ pub fn run(settings: CliSettings) -> Result<(), DynError> {
     let settings = Arc::clone(&settings);
     let _ = thread::spawn(move || {
         let context = LettersContext::new(&settings);
+        let algorithm = GeneticAlgorithm::new(&context);
 
         let mut population = (0..context.population_size)
             .into_iter()
@@ -42,7 +44,7 @@ pub fn run(settings: CliSettings) -> Result<(), DynError> {
         let mut prev_result = LettersCollection::new();
         let mut repeats_counter = 0;
         for index in 0..context.generations_count {
-            population = process::run(&mut population, &context).expect("All died!");
+            population = algorithm.run(&mut population, &context).expect("All died!");
 
             if let Some(date) =
                 render_progress(index, prev, &pb_main, &pb_letters, &population, &context)
