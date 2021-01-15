@@ -30,17 +30,18 @@ pub fn run(settings: CliSettings) -> Result<(), DynError> {
     let settings = Arc::clone(&settings);
     let _ = thread::spawn(move || {
         let context = Context::new(&settings);
+        let digraphs = ed_balance::models::Digraphs::load(&settings.digraphs).unwrap();
 
         let mut population = (0..context.population_size)
             .into_iter()
-            .map(|_| Letters::new(&context))
+            .map(|_| Letters::new(&context, &digraphs))
             .collect();
 
         let mut prev: DateTime<Utc> = Utc::now();
         let mut prev_result = LettersCollection::new();
         let mut repeats_counter = 0;
         for index in 0..context.generations_count {
-            population = process::run(&mut population, &context).expect("All died!");
+            population = process::run(&mut population, &context, &digraphs).expect("All died!");
 
             if let Some(date) =
                 render_progress(index, prev, &pb_main, &pb_letters, &population, &context)

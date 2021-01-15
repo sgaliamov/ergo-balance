@@ -1,7 +1,6 @@
 use std::{cmp::Ordering, collections::HashSet, error::Error, path::PathBuf};
 use structopt::StructOpt;
-
-use super::Digraphs;
+use rand::{distributions::Alphanumeric, Rng};
 
 #[derive(StructOpt)]
 pub struct CliSettings {
@@ -37,7 +36,6 @@ pub struct CliSettings {
 }
 
 pub struct Context {
-    pub digraphs: Digraphs,
     pub frozen_left: HashSet<char>,
     pub frozen_right: HashSet<char>,
     pub mutations_count: usize,
@@ -51,7 +49,6 @@ pub struct Context {
 
 impl Context {
     pub fn new(settings: &CliSettings) -> Self {
-        let digraphs = Digraphs::load(&settings.digraphs).unwrap();
 
         let mut frozen_left = HashSet::with_capacity(settings.frozen_left.len());
         frozen_left.extend(settings.frozen_left.chars());
@@ -60,7 +57,6 @@ impl Context {
         frozen_right.extend(settings.frozen_right.chars());
 
         Context {
-            digraphs,
             frozen_left,
             frozen_right,
             mutations_count: settings.mutations_count as usize,
@@ -73,9 +69,8 @@ impl Context {
         }
     }
 
-    pub fn default(digraphs: Digraphs) -> Self {
+    pub fn default() -> Self {
         Context {
-            digraphs,
             frozen_left: HashSet::new(),
             frozen_right: HashSet::new(),
             mutations_count: 4,
@@ -141,4 +136,12 @@ pub fn print_letters(
         "{}",
         format_result(left_letters, right_letters, left_score, right_score)
     );
+}
+
+pub fn get_version() -> String {
+    rand::thread_rng()
+        .sample_iter(&Alphanumeric)
+        .take(10)
+        .map(|x| x.to_string())
+        .collect()
 }
