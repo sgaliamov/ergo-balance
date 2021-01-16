@@ -1,3 +1,7 @@
-mod genetic;
+mod models;
+mod process;
+mod algorithm;
 
-pub use genetic::*;
+pub use models::*;
+pub use algorithm::*;
+pub use process::*;
