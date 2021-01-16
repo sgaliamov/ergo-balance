@@ -3,8 +3,6 @@ use std::hash::Hash;
 
 pub type LettersPointer = Box<Letters>;
 
-pub type LettersCollection = Vec<LettersPointer>;
-
 #[derive(Debug, Hash, Eq, PartialEq, PartialOrd, Clone, Copy)]
 pub struct Mutation {
     pub left: char,

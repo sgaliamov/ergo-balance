@@ -4,9 +4,8 @@ use ed_balance::{
     models::{CliSettings, Digraphs},
 };
 use ed_balance::{Context, IBehaviour};
-use itertools::Itertools;
-use rand::prelude::SliceRandom;
-use std::collections::HashSet;
+use itertools::{min, Itertools};
+use rand::{prelude::SliceRandom, thread_rng};
 
 pub struct LettersBehaviour {
     pub context: Context,
@@ -106,56 +105,57 @@ impl IBehaviour<Mutation, Letters> for LettersBehaviour {
         )
     }
 
-    // fn mutate(&self) -> LettersPointer {
-    //     let mut rng = thread_rng();
+    fn mutate(&self, individual: &Letters) -> LettersPointer {
+        let mut rng = thread_rng();
+        let context = &self.context;
 
-    //     let mut left = self
-    //         .left
-    //         .iter()
-    //         .filter(|&x| !context.frozen_left.contains(x))
-    //         .map(|&x| x)
-    //         .collect_vec();
-    //     left.shuffle(&mut rng);
+        let mut left = individual
+            .left
+            .iter()
+            .filter(|&x| !context.frozen_left.contains(x))
+            .map(|&x| x)
+            .collect_vec();
+        left.shuffle(&mut rng);
 
-    //     let mut right = self
-    //         .right
-    //         .iter()
-    //         .filter(|&x| !context.frozen_right.contains(x))
-    //         .map(|&x| x)
-    //         .collect_vec();
-    //     right.shuffle(&mut rng);
+        let mut right = individual
+            .right
+            .iter()
+            .filter(|&x| !context.frozen_right.contains(x))
+            .map(|&x| x)
+            .collect_vec();
+        right.shuffle(&mut rng);
 
-    //     let mut mutations: Vec<_> = Vec::with_capacity(context.mutations_count);
+        let mut mutations: Vec<_> = Vec::with_capacity(context.mutations_count);
 
-    //     let mutations_count = min(vec![context.mutations_count, left.len(), right.len()]).unwrap();
+        let mutations_count = min(vec![context.mutations_count, left.len(), right.len()]).unwrap();
 
-    //     for index in 0..mutations_count {
-    //         let left_char = left[index];
-    //         let right_char = right[index];
+        for index in 0..mutations_count {
+            let left_char = left[index];
+            let right_char = right[index];
 
-    //         left[index] = right_char;
-    //         right[index] = left_char;
+            left[index] = right_char;
+            right[index] = left_char;
 
-    //         mutations.push(Mutation {
-    //             left: left_char,
-    //             right: right_char,
-    //         });
-    //     }
+            mutations.push(Mutation {
+                left: left_char,
+                right: right_char,
+            });
+        }
 
-    //     left.extend(&context.frozen_left.iter().map(|&x| x).collect_vec());
-    //     right.extend(&context.frozen_right.iter().map(|&x| x).collect_vec());
+        left.extend(&context.frozen_left.iter().map(|&x| x).collect_vec());
+        right.extend(&context.frozen_right.iter().map(|&x| x).collect_vec());
 
-    //     Self::ctor(
-    //         get_version(),
-    //         &left,
-    //         &right,
-    //         mutations,
-    //         self.version.clone(),
-    //         self.left.clone(),
-    //         self.right.clone(),
-    //         &context.digraphs,
-    //     )
-    // }
+        Letters::new(
+            get_version(),
+            &left,
+            &right,
+            mutations,
+            individual.version.clone(),
+            individual.left.clone(),
+            individual.right.clone(),
+            &self.digraphs,
+        )
+    }
 
     fn get_context<'a>(&'a self) -> &'a Context {
         &self.context

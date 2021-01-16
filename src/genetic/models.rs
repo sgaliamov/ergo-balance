@@ -24,7 +24,7 @@ where
         partner_mutations: &Vec<TMutation>,
     ) -> Box<TIndividual>;
 
-    // fn mutate(&self, individual: &Box<dyn Individual>) -> Box<dyn Individual>;
+    fn mutate(&self, individual: &TIndividual) -> Box<TIndividual>;
 
     fn get_context<'a>(&'a self) -> &'a Context;
 }
