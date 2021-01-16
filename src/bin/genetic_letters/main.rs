@@ -1,7 +1,8 @@
 mod calculation;
 
-use ed_balance::CliSettings;
 use std::process;
+use calculation::{Letters, LettersBehaviour, Mutation};
+use ed_balance::{run, CliSettings};
 use structopt::StructOpt;
 
 // get a list of instances.
@@ -13,8 +14,8 @@ use structopt::StructOpt;
 
 fn main() {
     let args = CliSettings::from_args();
-    // if let Err(e) = run(args) {
-    //     eprintln!("Calculations failed: {:#?}", e);
-    //     process::exit(1);
-    // }
+    if let Err(e) = run::<Mutation, Letters, LettersBehaviour>(args) {
+        eprintln!("Calculations failed: {:#?}", e);
+        process::exit(1);
+    }
 }

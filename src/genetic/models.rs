@@ -2,7 +2,7 @@ use std::{collections::HashSet, hash::Hash};
 
 use crate::CliSettings;
 
-pub trait IIndividual<TMutation>: Clone + Eq + Hash + Sync + Send
+pub trait IIndividual<TMutation>: Clone + Eq + Hash + Send + Sync + PartialEq
 where
     TMutation: IMutation,
 {
@@ -18,6 +18,10 @@ where
     TMutation: IMutation,
     TIndividual: IIndividual<TMutation>,
 {
+    fn new(settings: &CliSettings) -> Self;
+
+    fn generate(&self) -> Box<TIndividual>;
+
     fn get_score(&self, individual: &TIndividual) -> f64;
 
     fn cross(

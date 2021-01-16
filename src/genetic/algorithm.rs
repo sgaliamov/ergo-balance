@@ -4,24 +4,24 @@ use std::{cmp::Ordering, marker::PhantomData};
 
 use crate::{IBehaviour, IIndividual, IMutation};
 
-pub struct GeneticAlgorithm<TMutation, TIndividual, TBehaviour>
+pub struct GeneticAlgorithm<'a,TMutation, TIndividual, TBehaviour>
 where
     TMutation: IMutation,
     TIndividual: IIndividual<TMutation>,
     TBehaviour: IBehaviour<TMutation, TIndividual>,
 {
-    behaviour: TBehaviour,
+    behaviour: &'a TBehaviour,
     phantom_mutation: PhantomData<TMutation>, // todo: find a better way
     phantom_individual: PhantomData<TIndividual>,
 }
 
-impl<TMutation, TIndividual, TBehaviour> GeneticAlgorithm<TMutation, TIndividual, TBehaviour>
+impl<'a, TMutation, TIndividual, TBehaviour> GeneticAlgorithm<'a, TMutation, TIndividual, TBehaviour>
 where
     TMutation: IMutation,
     TIndividual: IIndividual<TMutation>,
     TBehaviour: IBehaviour<TMutation, TIndividual>,
 {
-    pub fn new(behaviour: TBehaviour) -> Self {
+    pub fn new(behaviour: &'a TBehaviour) -> Self {
         GeneticAlgorithm {
             behaviour,
             phantom_mutation: PhantomData,

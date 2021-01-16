@@ -12,15 +12,15 @@ pub struct LettersBehaviour {
     pub digraphs: Digraphs,
 }
 
-impl LettersBehaviour {
-    pub fn new(settings: &CliSettings) -> Self {
+impl IBehaviour<Mutation, Letters> for LettersBehaviour {
+    fn new(settings: &CliSettings) -> Self {
         let digraphs = Digraphs::load(&settings.digraphs).unwrap();
         let context = Context::new(settings);
 
         LettersBehaviour { digraphs, context }
     }
 
-    pub fn generate(&self) -> LettersPointer {
+    fn generate(&self) -> LettersPointer {
         let context = &self.context;
         let mut all = ('a'..='z')
             .filter(|&x| !context.frozen_right.contains(&x))
@@ -60,9 +60,7 @@ impl LettersBehaviour {
             &self.digraphs,
         )
     }
-}
 
-impl IBehaviour<Mutation, Letters> for LettersBehaviour {
     fn get_score(&self, individual: &Letters) -> f64 {
         get_score(individual.left_score, individual.right_score)
     }
@@ -162,103 +160,107 @@ impl IBehaviour<Mutation, Letters> for LettersBehaviour {
     }
 }
 
-// #[cfg(test)]
-// pub mod tests {
-//     use super::*;
-//     use serde_json::json;
-//     use std::collections::HashSet;
+#[cfg(test)]
+pub mod tests {
+    use super::*;
+    use serde_json::json;
+    use std::collections::HashSet;
+    type LettersCollection = Vec<LettersPointer>;
 
-//     fn default_context() -> Context {
-//         Context {
-//             frozen_left: HashSet::new(),
-//             frozen_right: HashSet::new(),
-//             mutations_count: 4,
-//             population_size: 10,
-//             children_count: 10,
-//             generations_count: 10,
-//             results_count: 10,
-//             left_count: 15,
-//             repeats_count: 10,
-//         }
-//     }
+    fn default_context() -> Context {
+        Context {
+            frozen_left: HashSet::new(),
+            frozen_right: HashSet::new(),
+            mutations_count: 4,
+            population_size: 10,
+            children_count: 10,
+            generations_count: 10,
+            results_count: 10,
+            left_count: 15,
+            repeats_count: 10,
+        }
+    }
 
-//     #[test]
-//     fn unique_should_work() {
-//         let json = json!({});
-//         let digraphs = Digraphs::new(&json.as_object().unwrap());
-//         let context = default_context();
-//         let behaviour = LettersBehaviour { digraphs, context };
-//         let a = Letters::new(&behaviour);
-//         let b = Letters::new(&behaviour);
-//         let clone = a.clone();
-//         let vec: LettersCollection = vec![a, b, clone];
+    #[test]
+    fn unique_should_work() {
+        let json = json!({});
+        let digraphs = Digraphs::new(&json.as_object().unwrap());
+        let context = default_context();
+        let behaviour = LettersBehaviour { digraphs, context };
+        let a = behaviour.generate();
+        let b = behaviour.generate();
+        let clone = a.clone();
+        let vec: LettersCollection = vec![a, b, clone];
 
-//         let actual: LettersCollection = vec.into_iter().unique().collect();
+        let actual: LettersCollection = vec.into_iter().unique().collect();
 
-//         assert_eq!(actual.len(), 2);
-//     }
+        assert_eq!(actual.len(), 2);
+    }
 
-//     #[test]
-//     fn should_assign_parent_version() {
-//         let json = json!({});
-//         let digraphs = Digraphs::new(&json.as_object().unwrap());
-//         let mut context = default_context();
-//         let behaviour = LettersBehaviour { digraphs, context };
-//         context.mutations_count = 1;
+    #[test]
+    fn should_assign_parent_version() {
+        let json = json!({});
+        let digraphs = Digraphs::new(&json.as_object().unwrap());
+        let mut context = default_context();
+        context.mutations_count = 1;
+        let behaviour = LettersBehaviour { digraphs, context };
 
-//         let target = Letters::new(&behaviour);
-//         let actual = behaviour.mutate(&target);
+        let target = behaviour.generate();
+        let actual = behaviour.mutate(&target);
 
-//         assert_eq!(actual.parent_version, target.version);
-//     }
+        assert_eq!(actual.parent_version, target.version);
+    }
 
-//     #[test]
-//     fn should_not_mutate_source_object() {
-//         let json = json!({});
-//         let digraphs = Digraphs::new(&json.as_object().unwrap());
-//         let context = default_context(digraphs);
-//         let target = Letters::new(&context);
-//         let copy = target.left.clone();
-//         let actual = target.mutate(&context);
+    #[test]
+    fn should_not_mutate_source_object() {
+        let json = json!({});
+        let digraphs = Digraphs::new(&json.as_object().unwrap());
+        let context = default_context();
+        let behaviour = LettersBehaviour { digraphs, context };
+        let target = behaviour.generate();
+        let copy = target.left.clone();
+        let actual = behaviour.mutate(&target);
 
-//         assert_ne!(actual.left, copy);
-//         assert_eq!(copy, target.left);
-//     }
+        assert_ne!(actual.left, copy);
+        assert_eq!(copy, target.left);
+    }
 
-//     #[test]
-//     fn should_mutate() {
-//         let json = json!({});
-//         let digraphs = Digraphs::new(&json.as_object().unwrap());
-//         let context = default_context(digraphs);
-//         let target = Letters::new(&context);
+    #[test]
+    fn should_mutate() {
+        let json = json!({});
+        let digraphs = Digraphs::new(&json.as_object().unwrap());
+        let context = default_context();
+        let behaviour = LettersBehaviour { digraphs, context };
+        let target = behaviour.generate();
 
-//         let actual = target.mutate(&context);
+        let actual = behaviour.mutate(&target);
 
-//         assert_ne!(target.left, actual.left);
-//         assert_ne!(target.right, actual.right);
-//     }
+        assert_ne!(target.left, actual.left);
+        assert_ne!(target.right, actual.right);
+    }
 
-//     #[test]
-//     fn should_sort_chars() {
-//         let json = json!({});
-//         let digraphs = Digraphs::new(&json.as_object().unwrap());
-//         let context = default_context(digraphs);
-//         let letters = Letters::new(&context);
+    #[test]
+    fn should_sort_chars() {
+        let json = json!({});
+        let digraphs = Digraphs::new(&json.as_object().unwrap());
+        let context = default_context();
+        let behaviour = LettersBehaviour { digraphs, context };
+        let letters = behaviour.generate();
 
-//         let target = to_sorted_string(&letters.left);
-//         let actual: String = letters.left.iter().collect();
+        let target = to_sorted_string(&letters.left);
+        let actual: String = letters.left.iter().collect();
 
-//         assert_eq!(target, actual);
+        assert_eq!(target, actual);
 
-//         let target = to_sorted_string(&letters.right);
-//         let actual: String = letters.right.iter().collect();
+        let target = to_sorted_string(&letters.right);
+        let actual: String = letters.right.iter().collect();
 
-//         assert_eq!(target, actual);
-//     }
+        assert_eq!(target, actual);
+    }
 
-//     fn to_sorted_string(list: &Vec<char>) -> String {
-//         let mut vec = list.clone();
-//         vec.sort();
-//         vec.iter().collect()
-//     }
-// }
+    fn to_sorted_string(list: &Vec<char>) -> String {
+        let mut vec = list.clone();
+        vec.sort();
+        vec.iter().collect()
+    }
+}
