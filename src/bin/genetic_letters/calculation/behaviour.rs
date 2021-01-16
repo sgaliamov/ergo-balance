@@ -20,6 +20,47 @@ impl LettersBehaviour {
 
         LettersBehaviour { digraphs, context }
     }
+
+    pub fn create(&self) -> LettersPointer {
+        let context = &self.context;
+        let mut all = ('a'..='z')
+            .filter(|&x| !context.frozen_right.contains(&x))
+            .filter(|&x| !context.frozen_left.contains(&x))
+            .collect_vec();
+
+        all.shuffle(&mut rand::thread_rng());
+
+        let mut left = context.frozen_left.iter().map(|&x| x).collect_vec();
+        left.append(
+            &mut all
+                .iter()
+                .take(context.left_count - left.len())
+                .map(|&x| x)
+                .collect(),
+        );
+
+        let mut right = context.frozen_right.iter().map(|&x| x).collect_vec();
+        right.append(
+            &mut all
+                .iter()
+                .filter(|x| !left.contains(x))
+                .map(|&x| x)
+                .collect(),
+        );
+
+        let version = get_version();
+
+        Letters::new(
+            version.clone(),
+            &left,
+            &right,
+            Vec::new(),
+            version, // versions match to be able cross children with parents
+            left.clone(),
+            right.clone(),
+            &self.digraphs,
+        )
+    }
 }
 
 impl IBehaviour<Mutation, Letters> for LettersBehaviour {
@@ -53,7 +94,7 @@ impl IBehaviour<Mutation, Letters> for LettersBehaviour {
             }
         }
 
-        Letters::ctor(
+        Letters::new(
             get_version(),
             &left,
             &right,

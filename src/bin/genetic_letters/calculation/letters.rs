@@ -1,7 +1,4 @@
-use super::LettersBehaviour;
-use ed_balance::{Digraphs, IIndividual, IMutation, get_version};
-use itertools::Itertools;
-use rand::prelude::SliceRandom;
+use ed_balance::{Digraphs, IIndividual, IMutation};
 use std::hash::Hash;
 
 pub type LettersPointer = Box<Letters>;
@@ -54,7 +51,7 @@ impl Hash for Letters {
 }
 
 impl Letters {
-    pub fn ctor(
+    pub fn new(
         version: String,
         left: &Vec<char>,
         right: &Vec<char>,
@@ -97,47 +94,6 @@ impl Letters {
             parent_left: self.parent_left.clone(),
             parent_right: self.parent_right.clone(),
         })
-    }
-
-    pub fn new(behaviour: &LettersBehaviour) -> LettersPointer {
-        let context = &behaviour.context;
-        let mut all = ('a'..='z')
-            .filter(|&x| !context.frozen_right.contains(&x))
-            .filter(|&x| !context.frozen_left.contains(&x))
-            .collect_vec();
-
-        all.shuffle(&mut rand::thread_rng());
-
-        let mut left = context.frozen_left.iter().map(|&x| x).collect_vec();
-        left.append(
-            &mut all
-                .iter()
-                .take(context.left_count - left.len())
-                .map(|&x| x)
-                .collect(),
-        );
-
-        let mut right = context.frozen_right.iter().map(|&x| x).collect_vec();
-        right.append(
-            &mut all
-                .iter()
-                .filter(|x| !left.contains(x))
-                .map(|&x| x)
-                .collect(),
-        );
-
-        let version = get_version();
-
-        Self::ctor(
-            version.clone(),
-            &left,
-            &right,
-            Vec::new(),
-            version, // versions match to be able cross children with parents
-            left.clone(),
-            right.clone(),
-            &behaviour.digraphs,
-        )
     }
 }
 
