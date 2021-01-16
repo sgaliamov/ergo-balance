@@ -39,7 +39,7 @@ impl Hash for Keyboard {
 
 impl IIndividual<Mutation> for Keyboard {
     fn get_kind(&self) -> String {
-        todo!()
+        self.parent_version.clone()
     }
 
     fn to_string(&self) -> String {

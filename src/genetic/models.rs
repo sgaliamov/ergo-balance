@@ -38,8 +38,6 @@ where
 }
 
 pub struct Context {
-    pub frozen_left: HashSet<char>,
-    pub frozen_right: HashSet<char>,
     pub mutations_count: usize,
     pub population_size: usize,
     pub children_count: u16,
@@ -51,15 +49,9 @@ pub struct Context {
 
 impl Context {
     pub fn new(settings: &CliSettings) -> Self {
-        let mut frozen_left = HashSet::with_capacity(settings.frozen_left.len());
-        frozen_left.extend(settings.frozen_left.chars());
 
-        let mut frozen_right = HashSet::with_capacity(settings.frozen_right.len());
-        frozen_right.extend(settings.frozen_right.chars());
 
         Context {
-            frozen_left,
-            frozen_right,
             mutations_count: settings.mutations_count as usize,
             population_size: settings.population_size as usize,
             children_count: settings.children_count,

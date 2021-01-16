@@ -14,6 +14,7 @@ pub struct Behaviour {
 impl IBehaviour<Mutation, Keyboard> for Behaviour {
     fn new(settings: &CliSettings) -> Self {
         let context = Context::new(settings);
+        // todo: load text for tests
         Behaviour { context }
     }
 
