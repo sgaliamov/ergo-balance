@@ -11,7 +11,7 @@ where
     TBehaviour: IBehaviour<TMutation, TIndividual>,
 {
     behaviour: TBehaviour,
-    phantom_mutation: PhantomData<TMutation>, // todo: find better way
+    phantom_mutation: PhantomData<TMutation>, // todo: find a better way
     phantom_individual: PhantomData<TIndividual>,
 }
 
@@ -29,46 +29,43 @@ where
         }
     }
 
-    // pub fn run(
-    //     &self,
-    //     population: &mut Vec<Box<dyn Individual>>,
-    // ) -> Result<Vec<Box<dyn Individual>>, ()> {
-    //     let context = self.behaviour.get_context();
-    //     let mut mutants: Vec<_> = population
-    //         .into_par_iter()
-    //         .flat_map(|parent| {
-    //             (0..context.children_count)
-    //                 .map(|_| self.behaviour.mutate(parent))
-    //                 .collect::<Vec<_>>()
-    //         })
-    //         .collect::<Vec<_>>();
+    pub fn run(&self, population: &mut Vec<Box<TIndividual>>) -> Result<Vec<Box<TIndividual>>, ()> {
+        let context = self.behaviour.get_context();
+        let mut mutants: Vec<_> = population
+            .into_par_iter()
+            .flat_map(|parent| {
+                (0..context.children_count)
+                    .map(|_| self.behaviour.mutate(parent))
+                    .collect::<Vec<_>>()
+            })
+            .collect::<Vec<_>>();
 
-    //     mutants.append(population);
+        mutants.append(population);
 
-    //     let offspring: Vec<_> = mutants
-    //         .into_iter()
-    //         .unique()
-    //         .sorted_by(GeneticAlgorithm::score_cmp)
-    //         .group_by(|x| x.parent_version.clone())
-    //         .into_iter()
-    //         .map(|(_, group)| group.collect())
-    //         .collect::<Vec<_>>()
-    //         .into_par_iter()
-    //         .flat_map(|group| self.recombine(group))
-    //         .collect::<Vec<Box<dyn Individual>>>()
-    //         .into_iter()
-    //         .unique()
-    //         .sorted_by(GeneticAlgorithm::score_cmp)
-    //         .into_iter()
-    //         .take(context.population_size)
-    //         .collect();
+        let offspring: Vec<_> = mutants
+            .into_iter()
+            .unique()
+            .sorted_by(|a, b| self.score_cmp(a, b))
+            .group_by(|x| x.get_parent_version())
+            .into_iter()
+            .map(|(_, group)| group.collect())
+            .collect::<Vec<_>>()
+            .into_par_iter()
+            .flat_map(|group| self.recombine(group))
+            .collect::<Vec<Box<TIndividual>>>()
+            .into_iter()
+            .unique()
+            .sorted_by(|a, b| self.score_cmp(a, b))
+            .into_iter()
+            .take(context.population_size)
+            .collect();
 
-    //     if offspring.len() == 0 {
-    //         return Err(());
-    //     }
+        if offspring.len() == 0 {
+            return Err(());
+        }
 
-    //     Ok(offspring)
-    // }
+        Ok(offspring)
+    }
 
     fn score_cmp(&self, a: &TIndividual, b: &TIndividual) -> Ordering {
         let a_total = self.behaviour.get_score(a);

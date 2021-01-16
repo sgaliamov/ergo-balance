@@ -2,8 +2,8 @@ use super::{Letters, LettersPointer, Mutation};
 use ed_balance::{
     get_score, get_version,
     models::{CliSettings, Digraphs},
+    Context, IBehaviour,
 };
-use ed_balance::{Context, IBehaviour};
 use itertools::{min, Itertools};
 use rand::{prelude::SliceRandom, thread_rng};
 
@@ -20,7 +20,7 @@ impl LettersBehaviour {
         LettersBehaviour { digraphs, context }
     }
 
-    pub fn create(&self) -> LettersPointer {
+    pub fn generate(&self) -> LettersPointer {
         let context = &self.context;
         let mut all = ('a'..='z')
             .filter(|&x| !context.frozen_right.contains(&x))

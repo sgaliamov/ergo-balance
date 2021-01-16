@@ -1,12 +1,7 @@
-// mod context;
-// mod letters;
-// mod behaviour;
-
-// use chrono::prelude::*;
-// use context::LettersContext;
-// use ed_balance::models::{format_result, CliSettings, DynError};
-// use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
-// use std::{sync::Arc, thread};
+use crate::{CliSettings, Context, DynError, IIndividual, IMutation};
+use chrono::prelude::*;
+use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
+use std::{sync::Arc, thread};
 
 // pub fn run(settings: CliSettings) -> Result<(), DynError> {
 //     let settings = Arc::new(settings);
@@ -96,26 +91,30 @@
 //     Some((repeats, top_results))
 // }
 
-// fn render_progress(
-//     index: u16,
-//     prev: DateTime<Utc>,
-//     pb_main: &ProgressBar,
-//     pb_letters: &Vec<ProgressBar>,
-//     population: &LettersCollection,
-//     context: &LettersContext,
-// ) -> Option<DateTime<Utc>> {
-//     let passed = Utc::now() - prev;
+fn render_progress<TMutation, TIndividual>(
+    index: u16,
+    prev: DateTime<Utc>,
+    pb_main: &ProgressBar,
+    pb_letters: &Vec<ProgressBar>,
+    population: &Vec<TIndividual>,
+    context: &Context,
+) -> Option<DateTime<Utc>>
+where
+    TIndividual: IIndividual<TMutation>,
+    TMutation: IMutation,
+{
+    let passed = Utc::now() - prev;
 
-//     if passed.num_seconds() >= 5 || index == 0 || index == context.generations_count - 1 {
-//         for (i, item) in population.iter().take(pb_letters.len()).enumerate() {
-//             let text = format_result(&item.left, &item.right, item.left_score, item.right_score);
-//             pb_letters[i].set_message(&text);
-//         }
+    if passed.num_seconds() >= 5 || index == 0 || index == context.generations_count - 1 {
+        for (i, item) in population.iter().take(pb_letters.len()).enumerate() {
+            let text = item.to_string();
+            pb_letters[i].set_message(&text);
+        }
 
-//         pb_main.set_position(index as u64);
+        pb_main.set_position(index as u64);
 
-//         return Some(Utc::now());
-//     }
+        return Some(Utc::now());
+    }
 
-//     None
-// }
+    None
+}

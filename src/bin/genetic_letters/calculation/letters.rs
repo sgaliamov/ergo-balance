@@ -1,4 +1,4 @@
-use ed_balance::{Digraphs, IIndividual, IMutation};
+use ed_balance::{format_result, Digraphs, IIndividual, IMutation};
 use std::hash::Hash;
 
 pub type LettersPointer = Box<Letters>;
@@ -27,6 +27,14 @@ pub struct Letters {
 impl IIndividual<Mutation> for Letters {
     fn get_mutations(&self) -> &Vec<Mutation> {
         &self.mutations
+    }
+
+    fn get_parent_version(&self) -> String {
+        self.parent_version.clone()
+    }
+
+    fn to_string(&self) -> String {
+        format_result(&self.left, &self.right, self.left_score, self.right_score)
     }
 }
 

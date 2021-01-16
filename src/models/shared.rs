@@ -37,21 +37,24 @@ pub struct CliSettings {
 
 pub type DynError = Box<dyn Error>;
 
-fn get_factor(left_score: f64, right_score: f64) -> f64 {
-    let factor = if left_score.partial_cmp(&right_score).unwrap() == Ordering::Less {
-        left_score / right_score
-    } else {
-        right_score / left_score
-    };
-
-    1.1 - 0.1 / factor
+pub fn get_version() -> String {
+    rand::thread_rng()
+        .sample_iter(&Alphanumeric)
+        .take(10)
+        .map(|x| x.to_string())
+        .collect()
 }
 
-pub fn get_score(left: f64, right: f64) -> f64 {
-    let factor = get_factor(left, right);
-    let total = left + right;
-
-    total * factor * factor * factor
+pub fn print_letters(
+    left_letters: &Vec<char>,
+    right_letters: &Vec<char>,
+    left_score: f64,
+    right_score: f64,
+) {
+    println!(
+        "{}",
+        format_result(left_letters, right_letters, left_score, right_score)
+    );
 }
 
 pub fn format_result(
@@ -77,22 +80,19 @@ pub fn format_result(
     )
 }
 
-pub fn print_letters(
-    left_letters: &Vec<char>,
-    right_letters: &Vec<char>,
-    left_score: f64,
-    right_score: f64,
-) {
-    println!(
-        "{}",
-        format_result(left_letters, right_letters, left_score, right_score)
-    );
+fn get_factor(left_score: f64, right_score: f64) -> f64 {
+    let factor = if left_score.partial_cmp(&right_score).unwrap() == Ordering::Less {
+        left_score / right_score
+    } else {
+        right_score / left_score
+    };
+
+    1.1 - 0.1 / factor
 }
 
-pub fn get_version() -> String {
-    rand::thread_rng()
-        .sample_iter(&Alphanumeric)
-        .take(10)
-        .map(|x| x.to_string())
-        .collect()
+pub fn get_score(left: f64, right: f64) -> f64 {
+    let factor = get_factor(left, right);
+    let total = left + right;
+
+    total * factor * factor * factor
 }

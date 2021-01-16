@@ -1,17 +1,19 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, hash::Hash};
 
 use crate::CliSettings;
 
-pub trait IIndividual<TMutation>
+pub trait IIndividual<TMutation>: Clone + Eq + Hash + Sync + Send
 where
     TMutation: IMutation,
 {
     fn get_mutations<'a>(&'a self) -> &'a Vec<TMutation>;
+    fn get_parent_version(&self) -> String;
+    fn to_string(&self) -> String;
 }
 
-pub trait IMutation {}
+pub trait IMutation: Sync {}
 
-pub trait IBehaviour<TMutation, TIndividual>
+pub trait IBehaviour<TMutation, TIndividual>: Sync
 where
     TMutation: IMutation,
     TIndividual: IIndividual<TMutation>,
@@ -62,21 +64,3 @@ impl Context {
         }
     }
 }
-
-// pub type BehaviourPointer<TMutation, TIndividual>
-// where
-//     TMutation: Mutation,
-//     TIndividual: Individual,
-// = Box<dyn Behaviour<TMutation, TIndividual>>;
-
-// pub trait Context {
-//     fn get_frozen_left(&self) -> HashSet<char>;
-//     fn get_frozen_right(&self) -> HashSet<char>;
-//     fn get_mutations_count(&self) -> usize;
-//     fn get_population_size(&self) -> usize;
-//     fn get_children_count(&self) -> u16;
-//     fn get_generations_count(&self) -> u16;
-//     fn get_results_count(&self) -> usize;
-//     fn get_left_count(&self) -> usize;
-//     fn get_repeats_count(&self) -> u16;
-// }

@@ -1,6 +1,6 @@
 mod calculation;
 
-use ed_balance::models::CliSettings;
+use ed_balance::CliSettings;
 use std::process;
 use structopt::StructOpt;
 
