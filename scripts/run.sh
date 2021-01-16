@@ -1,7 +1,7 @@
 clear
 
-./target/publish/genetic.exe \
-    -d C:/Users/sgaliamov/projects/personal/ergo-layouts/src/edBalance/data/digraphs.json \
+./target/publish/genetic_letters.exe \
+    -d ./data/digraphs.json \
     -p 1000 \
     -c 20 \
     -g 10000 \

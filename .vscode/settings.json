@@ -15,7 +15,8 @@
     "**/.git/objects/**",
     ".vscode",
     ".vscode-insiders",
-    ".rustup"
+    ".rustup",
+    "data/**"
   ],
   "rust-analyzer.diagnostics.disabled": ["macro-error"]
 }

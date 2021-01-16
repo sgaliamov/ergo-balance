@@ -5,10 +5,10 @@
       "name": "Debug genetic",
       "type": "lldb",
       "request": "launch",
-      "program": "${workspaceRoot}/target/debug/genetic.exe",
+      "program": "${workspaceRoot}/target/debug/genetic_letters.exe",
       "args": [
         "-d",
-        "C:/Users/sgaliamov/projects/personal/ergo-layouts/src/edBalance/data/digraphs.json",
+        "${workspaceRoot}/data/digraphs.json",
         "--frozen-left",
         "zxcvaser",
         "-p",
@@ -22,12 +22,6 @@
         "-l",
         "12"
       ]
-    },
-    {
-      "name": "Debug tests",
-      "type": "lldb",
-      "request": "launch",
-      "program": "${workspaceRoot}/target/debug/tests.exe"
     }
   ]
 }
