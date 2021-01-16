@@ -66,30 +66,34 @@ use std::{sync::Arc, thread};
 //     Ok(())
 // }
 
-// fn need_to_continue(
-//     mut repeats: u16,
-//     prev_result: LettersCollection,
-//     population: &LettersCollection,
-//     context: &LettersContext,
-// ) -> Option<(u16, LettersCollection)> {
-//     let top_results: Vec<_> = population
-//         .iter()
-//         .take(context.results_count)
-//         .map(|x| x.copy())
-//         .collect();
+fn need_to_continue<TMutation, TIndividual>(
+    mut repeats: u16,
+    prev_result: &Vec<TIndividual>,
+    population: &Vec<TIndividual>,
+    context: &Context,
+) -> Option<(u16, Vec<TIndividual>)>
+where
+    TIndividual: IIndividual<TMutation>,
+    TMutation: IMutation,
+{
+    let top_results: Vec<_> = population
+        .iter()
+        .take(context.results_count)
+        .map(|x| x.clone())
+        .collect();
 
-//     if prev_result.eq(&top_results) {
-//         repeats += 1;
-//     } else {
-//         repeats = 0;
-//     }
+    if prev_result.eq(&top_results) {
+        repeats += 1;
+    } else {
+        repeats = 0;
+    }
 
-//     if repeats == context.repeats_count {
-//         return None;
-//     }
+    if repeats == context.repeats_count {
+        return None;
+    }
 
-//     Some((repeats, top_results))
-// }
+    Some((repeats, top_results))
+}
 
 fn render_progress<TMutation, TIndividual>(
     index: u16,
