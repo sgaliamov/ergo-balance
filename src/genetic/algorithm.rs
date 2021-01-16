@@ -47,7 +47,7 @@ where
             .into_iter()
             .unique()
             .sorted_by(|a, b| self.score_cmp(a, b))
-            .group_by(|x| x.get_parent_version())
+            .group_by(|x| x.get_kind())
             .into_iter()
             .map(|(_, group)| group.collect())
             .collect::<Vec<_>>()
@@ -83,7 +83,7 @@ where
         let mut crossed = collection
             .iter()
             .tuple_windows()
-            .map(|(a, b)| self.behaviour.cross(&a, &b.get_mutations()))
+            .map(|(a, b)| self.behaviour.cross(&a, &b))
             .collect_vec();
 
         crossed.extend(collection);

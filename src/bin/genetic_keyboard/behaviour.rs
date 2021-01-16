@@ -1,23 +1,20 @@
-use ed_balance::{Context, IBehaviour};
-
 use crate::keyboard::{Keyboard, Mutation};
-
-// use super::{Letters, LettersPointer, Mutation};
-// use ed_balance::{
-//     get_score, get_version,
-//     models::{CliSettings, Digraphs},
-//     Context, IBehaviour,
-// };
-// use itertools::{min, Itertools};
-// use rand::{prelude::SliceRandom, thread_rng};
+use ed_balance::{
+    get_score, get_version,
+    models::{CliSettings, Digraphs},
+    Context, IBehaviour,
+};
+use itertools::{min, Itertools};
+use rand::{prelude::SliceRandom, thread_rng};
 
 pub struct Behaviour {
     pub context: Context,
 }
 
 impl IBehaviour<Mutation, Keyboard> for Behaviour {
-    fn new(settings: &ed_balance::CliSettings) -> Self {
-        todo!()
+    fn new(settings: &CliSettings) -> Self {
+        let context = Context::new(settings);
+        Behaviour { context }
     }
 
     fn generate(&self) -> Box<Keyboard> {
@@ -28,7 +25,7 @@ impl IBehaviour<Mutation, Keyboard> for Behaviour {
         todo!()
     }
 
-    fn cross(&self, individual: &Keyboard, partner_mutations: &Vec<Mutation>) -> Box<Keyboard> {
+    fn cross(&self, individual: &Keyboard, partner: &Keyboard) -> Box<Keyboard> {
         todo!()
     }
 

@@ -64,13 +64,13 @@ impl IBehaviour<Mutation, Letters> for Behaviour {
         get_score(individual.left_score, individual.right_score)
     }
 
-    fn cross(&self, individual: &Letters, partner_mutations: &Vec<Mutation>) -> LettersPointer {
+    fn cross(&self, individual: &Letters, partner: &Letters) -> LettersPointer {
         let mut left = individual.parent_left.clone();
         let mut right = individual.parent_right.clone();
         let mut mutations: Vec<_> = individual
             .mutations
             .iter()
-            .chain(partner_mutations.iter())
+            .chain(partner.mutations.iter())
             .unique()
             .map(|&x| x)
             .collect();

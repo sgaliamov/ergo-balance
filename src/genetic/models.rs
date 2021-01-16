@@ -6,8 +6,10 @@ pub trait IIndividual<TMutation>: Clone + Eq + Hash + Send + Sync
 where
     TMutation: IMutation,
 {
-    fn get_mutations<'a>(&'a self) -> &'a Vec<TMutation>;
-    fn get_parent_version(&self) -> String;
+    /// The kind of individual.
+    fn get_kind(&self) -> String;
+
+    /// Text representation.
     fn to_string(&self) -> String;
 }
 
@@ -27,7 +29,7 @@ where
     fn cross(
         &self,
         individual: &TIndividual,
-        partner_mutations: &Vec<TMutation>,
+        partner: &TIndividual,
     ) -> Box<TIndividual>;
 
     fn mutate(&self, individual: &TIndividual) -> Box<TIndividual>;

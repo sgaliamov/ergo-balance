@@ -38,11 +38,7 @@ impl Hash for Keyboard {
 }
 
 impl IIndividual<Mutation> for Keyboard {
-    fn get_mutations<'a>(&'a self) -> &'a Vec<Mutation> {
-        todo!()
-    }
-
-    fn get_parent_version(&self) -> String {
+    fn get_kind(&self) -> String {
         todo!()
     }
 

@@ -25,11 +25,7 @@ pub struct Letters {
 }
 
 impl IIndividual<Mutation> for Letters {
-    fn get_mutations(&self) -> &Vec<Mutation> {
-        &self.mutations
-    }
-
-    fn get_parent_version(&self) -> String {
+    fn get_kind(&self) -> String {
         self.parent_version.clone()
     }
 
