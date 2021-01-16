@@ -7,17 +7,16 @@ use ed_balance::{
 use itertools::{min, Itertools};
 use rand::{prelude::SliceRandom, thread_rng};
 
-pub struct LettersBehaviour {
+pub struct Behaviour {
     pub context: Context,
     pub digraphs: Digraphs,
 }
 
-impl IBehaviour<Mutation, Letters> for LettersBehaviour {
+impl IBehaviour<Mutation, Letters> for Behaviour {
     fn new(settings: &CliSettings) -> Self {
         let digraphs = Digraphs::load(&settings.digraphs).unwrap();
         let context = Context::new(settings);
-
-        LettersBehaviour { digraphs, context }
+        Behaviour { digraphs, context }
     }
 
     fn generate(&self) -> LettersPointer {
@@ -186,7 +185,7 @@ pub mod tests {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
         let context = default_context();
-        let behaviour = LettersBehaviour { digraphs, context };
+        let behaviour = Behaviour { digraphs, context };
         let a = behaviour.generate();
         let b = behaviour.generate();
         let clone = a.clone();
@@ -203,7 +202,7 @@ pub mod tests {
         let digraphs = Digraphs::new(&json.as_object().unwrap());
         let mut context = default_context();
         context.mutations_count = 1;
-        let behaviour = LettersBehaviour { digraphs, context };
+        let behaviour = Behaviour { digraphs, context };
 
         let target = behaviour.generate();
         let actual = behaviour.mutate(&target);
@@ -216,7 +215,7 @@ pub mod tests {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
         let context = default_context();
-        let behaviour = LettersBehaviour { digraphs, context };
+        let behaviour = Behaviour { digraphs, context };
         let target = behaviour.generate();
         let copy = target.left.clone();
         let actual = behaviour.mutate(&target);
@@ -230,7 +229,7 @@ pub mod tests {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
         let context = default_context();
-        let behaviour = LettersBehaviour { digraphs, context };
+        let behaviour = Behaviour { digraphs, context };
         let target = behaviour.generate();
 
         let actual = behaviour.mutate(&target);
@@ -244,7 +243,7 @@ pub mod tests {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
         let context = default_context();
-        let behaviour = LettersBehaviour { digraphs, context };
+        let behaviour = Behaviour { digraphs, context };
         let letters = behaviour.generate();
 
         let target = to_sorted_string(&letters.left);

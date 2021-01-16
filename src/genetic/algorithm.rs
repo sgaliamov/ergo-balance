@@ -4,7 +4,7 @@ use std::{cmp::Ordering, marker::PhantomData};
 
 use crate::{IBehaviour, IIndividual, IMutation};
 
-pub struct GeneticAlgorithm<'a,TMutation, TIndividual, TBehaviour>
+pub struct GeneticAlgorithm<'a, TMutation, TIndividual, TBehaviour>
 where
     TMutation: IMutation,
     TIndividual: IIndividual<TMutation>,
@@ -15,7 +15,8 @@ where
     phantom_individual: PhantomData<TIndividual>,
 }
 
-impl<'a, TMutation, TIndividual, TBehaviour> GeneticAlgorithm<'a, TMutation, TIndividual, TBehaviour>
+impl<'a, TMutation, TIndividual, TBehaviour>
+    GeneticAlgorithm<'a, TMutation, TIndividual, TBehaviour>
 where
     TMutation: IMutation,
     TIndividual: IIndividual<TMutation>,
@@ -52,7 +53,7 @@ where
             .collect::<Vec<_>>()
             .into_par_iter()
             .flat_map(|group| self.recombine(group))
-            .collect::<Vec<Box<TIndividual>>>()
+            .collect::<Vec<_>>()
             .into_iter()
             .unique()
             .sorted_by(|a, b| self.score_cmp(a, b))
