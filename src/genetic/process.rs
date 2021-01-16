@@ -1,13 +1,14 @@
-mod letters;
-mod process;
-
+use crate::{CliSettings, DynError, GeneticAlgorithm, IBehaviour, IIndividual, IMutation};
 use chrono::prelude::*;
-use ed_balance::models::{format_result, CliSettings, Context, DynError};
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
-use letters::{Letters, LettersCollection};
 use std::{sync::Arc, thread};
 
-pub fn run(settings: CliSettings) -> Result<(), DynError> {
+pub fn run<TMutation, TIndividual, TBehaviour>(settings: CliSettings) -> Result<(), DynError>
+where
+    TMutation: IMutation,
+    TIndividual: IIndividual<TMutation>,
+    TBehaviour: IBehaviour<TMutation, TIndividual>,
+{
     let settings = Arc::new(settings);
     let progress = MultiProgress::new();
 
@@ -29,28 +30,38 @@ pub fn run(settings: CliSettings) -> Result<(), DynError> {
 
     let settings = Arc::clone(&settings);
     let _ = thread::spawn(move || {
-        let context = Context::new(&settings);
+        let behaviour = TBehaviour::new(&settings);
+        let algorithm = GeneticAlgorithm::new(&behaviour);
 
-        let mut population = (0..context.population_size)
+        let mut population = (0..settings.population_size)
             .into_iter()
-            .map(|_| Letters::new(&context))
+            .map(|_| behaviour.generate())
             .collect();
 
         let mut prev: DateTime<Utc> = Utc::now();
-        let mut prev_result = LettersCollection::new();
+        let mut prev_result = Vec::<Box<TIndividual>>::new();
         let mut repeats_counter = 0;
-        for index in 0..context.generations_count {
-            population = process::run(&mut population, &context).expect("All died!");
+        for index in 0..settings.generations_count {
+            population = algorithm.run(&mut population).expect("All died!");
 
-            if let Some(date) =
-                render_progress(index, prev, &pb_main, &pb_letters, &population, &context)
-            {
+            if let Some(date) = render_progress(
+                index,
+                prev,
+                &pb_main,
+                &pb_letters,
+                &population,
+                settings.generations_count,
+            ) {
                 prev = date
             }
 
-            if let Some((repeats, top_results)) =
-                need_to_continue(repeats_counter, prev_result, &population, &context)
-            {
+            if let Some((repeats, top_results)) = need_to_continue(
+                repeats_counter,
+                &prev_result,
+                &population,
+                settings.results_count.into(),
+                settings.repeats_count,
+            ) {
                 prev_result = top_results;
                 repeats_counter = repeats;
                 pb_main.set_message(&format!("[repeats: {}]", repeats_counter));
@@ -69,16 +80,21 @@ pub fn run(settings: CliSettings) -> Result<(), DynError> {
     Ok(())
 }
 
-fn need_to_continue(
+fn need_to_continue<TMutation, TIndividual>(
     mut repeats: u16,
-    prev_result: LettersCollection,
-    population: &LettersCollection,
-    context: &Context,
-) -> Option<(u16, LettersCollection)> {
+    prev_result: &Vec<Box<TIndividual>>,
+    population: &Vec<Box<TIndividual>>,
+    results_count: usize,
+    repeats_count: u16,
+) -> Option<(u16, Vec<Box<TIndividual>>)>
+where
+    TIndividual: IIndividual<TMutation>,
+    TMutation: IMutation,
+{
     let top_results: Vec<_> = population
         .iter()
-        .take(context.results_count)
-        .map(|x| x.copy())
+        .take(results_count)
+        .map(|x| x.clone())
         .collect();
 
     if prev_result.eq(&top_results) {
@@ -87,26 +103,30 @@ fn need_to_continue(
         repeats = 0;
     }
 
-    if repeats == context.repeats_count {
+    if repeats == repeats_count {
         return None;
     }
 
     Some((repeats, top_results))
 }
 
-fn render_progress(
+fn render_progress<TMutation, TIndividual>(
     index: u16,
     prev: DateTime<Utc>,
     pb_main: &ProgressBar,
     pb_letters: &Vec<ProgressBar>,
-    population: &LettersCollection,
-    context: &Context,
-) -> Option<DateTime<Utc>> {
+    population: &Vec<Box<TIndividual>>,
+    generations_count: u16,
+) -> Option<DateTime<Utc>>
+where
+    TIndividual: IIndividual<TMutation>,
+    TMutation: IMutation,
+{
     let passed = Utc::now() - prev;
 
-    if passed.num_seconds() >= 5 || index == 0 || index == context.generations_count - 1 {
+    if passed.num_seconds() >= 5 || index == 0 || index == generations_count - 1 {
         for (i, item) in population.iter().take(pb_letters.len()).enumerate() {
-            let text = format_result(&item.left, &item.right, item.left_score, item.right_score);
+            let text = item.to_string();
             pb_letters[i].set_message(&text);
         }
 

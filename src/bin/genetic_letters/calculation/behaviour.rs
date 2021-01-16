@@ -1,92 +1,27 @@
-use ed_balance::models::{Context, Digraphs};
+use super::{Letters, LettersPointer, Mutation};
+use ed_balance::{
+    get_score, get_version,
+    models::{CliSettings, Digraphs},
+    Context, IBehaviour,
+};
 use itertools::{min, Itertools};
-use rand::{distributions::Alphanumeric, prelude::SliceRandom, thread_rng, Rng};
-use std::hash::Hash;
+use rand::{prelude::SliceRandom, thread_rng};
 
-#[derive(Debug, Hash, Eq, PartialEq, PartialOrd, Clone, Copy)]
-pub struct Mutation {
-    pub left: char,
-    pub right: char,
+pub struct LettersBehaviour {
+    pub context: Context,
+    pub digraphs: Digraphs,
 }
 
-#[derive(Debug, Clone)]
-pub struct Letters {
-    pub version: String,
-    pub left: Vec<char>,
-    pub right: Vec<char>,
-    pub left_score: f64,
-    pub right_score: f64,
-    pub mutations: Vec<Mutation>,
-    pub parent_version: String,
-    pub parent_left: Vec<char>,
-    pub parent_right: Vec<char>,
-}
+impl IBehaviour<Mutation, Letters> for LettersBehaviour {
+    fn new(settings: &CliSettings) -> Self {
+        let digraphs = Digraphs::load(&settings.digraphs).unwrap();
+        let context = Context::new(settings);
 
-impl Eq for Letters {}
-
-impl PartialEq for Letters {
-    fn eq(&self, other: &Letters) -> bool {
-        self.left.eq(&other.left) && self.right.eq(&other.right)
-    }
-}
-
-impl Hash for Letters {
-    fn hash<H>(&self, state: &mut H)
-    where
-        H: std::hash::Hasher,
-    {
-        self.left.hash(state);
-        self.right.hash(state);
-    }
-}
-
-impl Letters {
-    fn ctor(
-        version: String,
-        left: &Vec<char>,
-        right: &Vec<char>,
-        mutations: Vec<Mutation>,
-        parent_version: String,
-        parent_left: Vec<char>,
-        parent_right: Vec<char>,
-        digraphs: &Digraphs,
-    ) -> LettersPointer {
-        let mut sorted_left = left.clone();
-        let mut sorted_right = right.clone();
-        sorted_left.sort();
-        sorted_right.sort();
-
-        let left_score = digraphs.calculate_score(&sorted_left);
-        let right_score = digraphs.calculate_score(&sorted_right);
-
-        box_letters(Letters {
-            left: sorted_left,
-            right: sorted_right,
-            left_score,
-            right_score,
-            version,
-            mutations,
-            parent_version,
-            parent_left,
-            parent_right,
-        })
+        LettersBehaviour { digraphs, context }
     }
 
-    pub fn copy(&self) -> LettersPointer {
-        box_letters(Letters {
-            left: self.left.clone(),
-            right: self.right.clone(),
-            left_score: self.left_score,
-            right_score: self.right_score,
-            version: self.version.clone(),
-            mutations: self.mutations.clone(),
-            parent_version: self.parent_version.clone(),
-            parent_left: self.parent_left.clone(),
-            parent_right: self.parent_right.clone(),
-        })
-    }
-
-    pub fn new(context: &Context) -> LettersPointer {
+    fn generate(&self) -> LettersPointer {
+        let context = &self.context;
         let mut all = ('a'..='z')
             .filter(|&x| !context.frozen_right.contains(&x))
             .filter(|&x| !context.frozen_left.contains(&x))
@@ -114,7 +49,7 @@ impl Letters {
 
         let version = get_version();
 
-        Self::ctor(
+        Letters::new(
             version.clone(),
             &left,
             &right,
@@ -122,14 +57,18 @@ impl Letters {
             version, // versions match to be able cross children with parents
             left.clone(),
             right.clone(),
-            &context.digraphs,
+            &self.digraphs,
         )
     }
 
-    pub fn cross(&self, partner_mutations: &Vec<Mutation>, context: &Context) -> LettersPointer {
-        let mut left = self.parent_left.clone();
-        let mut right = self.parent_right.clone();
-        let mut mutations: Vec<_> = self
+    fn get_score(&self, individual: &Letters) -> f64 {
+        get_score(individual.left_score, individual.right_score)
+    }
+
+    fn cross(&self, individual: &Letters, partner_mutations: &Vec<Mutation>) -> LettersPointer {
+        let mut left = individual.parent_left.clone();
+        let mut right = individual.parent_right.clone();
+        let mut mutations: Vec<_> = individual
             .mutations
             .iter()
             .chain(partner_mutations.iter())
@@ -139,7 +78,7 @@ impl Letters {
 
         mutations.shuffle(&mut rand::thread_rng());
 
-        for mutation in mutations.iter().take(context.mutations_count) {
+        for mutation in mutations.iter().take(self.context.mutations_count) {
             let left_index = left.iter().position(|&x| x == mutation.left);
             let right_index = right.iter().position(|&x| x == mutation.right);
 
@@ -152,22 +91,23 @@ impl Letters {
             }
         }
 
-        Self::ctor(
+        Letters::new(
             get_version(),
             &left,
             &right,
             mutations, // this mutations is not just a sum of 2 mutations, it's an intersection.
-            self.parent_version.clone(), // so, to be able to get the current state,
-            self.parent_left.clone(), // we have apply this mutations on the initial parent letters.
-            self.parent_right.clone(), // current - mutations = parent.
-            &context.digraphs,
+            individual.parent_version.clone(), // so, to be able to get the current state,
+            individual.parent_left.clone(), // we have apply this mutations on the initial parent letters.
+            individual.parent_right.clone(), // current - mutations = parent.
+            &self.digraphs,
         )
     }
 
-    pub fn mutate(&self, context: &Context) -> LettersPointer {
+    fn mutate(&self, individual: &Letters) -> LettersPointer {
         let mut rng = thread_rng();
+        let context = &self.context;
 
-        let mut left = self
+        let mut left = individual
             .left
             .iter()
             .filter(|&x| !context.frozen_left.contains(x))
@@ -175,7 +115,7 @@ impl Letters {
             .collect_vec();
         left.shuffle(&mut rng);
 
-        let mut right = self
+        let mut right = individual
             .right
             .iter()
             .filter(|&x| !context.frozen_right.contains(x))
@@ -203,42 +143,52 @@ impl Letters {
         left.extend(&context.frozen_left.iter().map(|&x| x).collect_vec());
         right.extend(&context.frozen_right.iter().map(|&x| x).collect_vec());
 
-        Self::ctor(
+        Letters::new(
             get_version(),
             &left,
             &right,
             mutations,
-            self.version.clone(),
-            self.left.clone(),
-            self.right.clone(),
-            &context.digraphs,
+            individual.version.clone(),
+            individual.left.clone(),
+            individual.right.clone(),
+            &self.digraphs,
         )
     }
-}
 
-fn get_version() -> String {
-    rand::thread_rng()
-        .sample_iter(&Alphanumeric)
-        .take(10)
-        .collect()
-}
-
-fn box_letters(letters: Letters) -> LettersPointer {
-    Box::new(letters)
+    fn get_context<'a>(&'a self) -> &'a Context {
+        &self.context
+    }
 }
 
 #[cfg(test)]
 pub mod tests {
     use super::*;
     use serde_json::json;
+    use std::collections::HashSet;
+    type LettersCollection = Vec<LettersPointer>;
+
+    fn default_context() -> Context {
+        Context {
+            frozen_left: HashSet::new(),
+            frozen_right: HashSet::new(),
+            mutations_count: 4,
+            population_size: 10,
+            children_count: 10,
+            generations_count: 10,
+            results_count: 10,
+            left_count: 15,
+            repeats_count: 10,
+        }
+    }
 
     #[test]
     fn unique_should_work() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let context = Context::default(digraphs);
-        let a = Letters::new(&context);
-        let b = Letters::new(&context);
+        let context = default_context();
+        let behaviour = LettersBehaviour { digraphs, context };
+        let a = behaviour.generate();
+        let b = behaviour.generate();
         let clone = a.clone();
         let vec: LettersCollection = vec![a, b, clone];
 
@@ -251,11 +201,12 @@ pub mod tests {
     fn should_assign_parent_version() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let mut context = Context::default(digraphs);
+        let mut context = default_context();
         context.mutations_count = 1;
+        let behaviour = LettersBehaviour { digraphs, context };
 
-        let target = Letters::new(&context);
-        let actual = target.mutate(&context);
+        let target = behaviour.generate();
+        let actual = behaviour.mutate(&target);
 
         assert_eq!(actual.parent_version, target.version);
     }
@@ -264,10 +215,11 @@ pub mod tests {
     fn should_not_mutate_source_object() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let context = Context::default(digraphs);
-        let target = Letters::new(&context);
+        let context = default_context();
+        let behaviour = LettersBehaviour { digraphs, context };
+        let target = behaviour.generate();
         let copy = target.left.clone();
-        let actual = target.mutate(&context);
+        let actual = behaviour.mutate(&target);
 
         assert_ne!(actual.left, copy);
         assert_eq!(copy, target.left);
@@ -277,10 +229,11 @@ pub mod tests {
     fn should_mutate() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let context = Context::default(digraphs);
-        let target = Letters::new(&context);
+        let context = default_context();
+        let behaviour = LettersBehaviour { digraphs, context };
+        let target = behaviour.generate();
 
-        let actual = target.mutate(&context);
+        let actual = behaviour.mutate(&target);
 
         assert_ne!(target.left, actual.left);
         assert_ne!(target.right, actual.right);
@@ -290,8 +243,9 @@ pub mod tests {
     fn should_sort_chars() {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
-        let context = Context::default(digraphs);
-        let letters = Letters::new(&context);
+        let context = default_context();
+        let behaviour = LettersBehaviour { digraphs, context };
+        let letters = behaviour.generate();
 
         let target = to_sorted_string(&letters.left);
         let actual: String = letters.left.iter().collect();
@@ -310,7 +264,3 @@ pub mod tests {
         vec.iter().collect()
     }
 }
-
-pub type LettersPointer = Box<Letters>;
-
-pub type LettersCollection = Vec<LettersPointer>;

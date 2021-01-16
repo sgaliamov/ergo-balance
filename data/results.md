@@ -18,4 +18,3 @@
 
 15; bdefjlmopqruvwy; 28.727; 11; acghiknstxz; 28.535; 0.999; 57.262; 57.146;
 15; bdefjlmopqruvxy; 28.253; 11; acghiknstwz; 29.359; 0.996; 57.612; 56.938;
-
