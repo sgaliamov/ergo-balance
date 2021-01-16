@@ -3,7 +3,7 @@ use std::hash::Hash;
 
 pub type LettersPointer = Box<Letters>;
 
-#[derive(Debug, Hash, Eq, PartialEq, PartialOrd, Clone, Copy)]
+#[derive(Hash, Eq, PartialEq, Clone, Copy)]
 pub struct Mutation {
     pub left: char,
     pub right: char,
@@ -11,7 +11,7 @@ pub struct Mutation {
 
 impl IMutation for Mutation {}
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Letters {
     pub version: String,
     pub left: Vec<char>,
@@ -35,24 +35,6 @@ impl IIndividual<Mutation> for Letters {
 
     fn to_string(&self) -> String {
         format_result(&self.left, &self.right, self.left_score, self.right_score)
-    }
-}
-
-impl Eq for Letters {}
-
-impl PartialEq for Letters {
-    fn eq(&self, other: &Letters) -> bool {
-        self.left.eq(&other.left) && self.right.eq(&other.right)
-    }
-}
-
-impl Hash for Letters {
-    fn hash<H>(&self, state: &mut H)
-    where
-        H: std::hash::Hasher,
-    {
-        self.left.hash(state);
-        self.right.hash(state);
     }
 }
 
@@ -86,6 +68,24 @@ impl Letters {
             parent_left,
             parent_right,
         })
+    }
+}
+
+impl Eq for Letters {}
+
+impl PartialEq for Letters {
+    fn eq(&self, other: &Letters) -> bool {
+        self.left.eq(&other.left) && self.right.eq(&other.right)
+    }
+}
+
+impl Hash for Letters {
+    fn hash<H>(&self, state: &mut H)
+    where
+        H: std::hash::Hasher,
+    {
+        self.left.hash(state);
+        self.right.hash(state);
     }
 }
 

@@ -2,7 +2,7 @@ use std::{collections::HashSet, hash::Hash};
 
 use crate::CliSettings;
 
-pub trait IIndividual<TMutation>: Clone + Eq + Hash + Send + Sync + PartialEq
+pub trait IIndividual<TMutation>: Clone + Eq + Hash + Send + Sync
 where
     TMutation: IMutation,
 {
