@@ -1,6 +1,6 @@
 {
-  "text": "C:/Users/sgaliamov/Documents/MEGAsync/notes/samples/1.txt",
-  "keys": {
+  "samplePath": "C:/Users/sgaliamov/Documents/MEGAsync/notes/samples/1.txt",
+  "frozen": {
     "10": "a",
     "11": "s",
     "20": "z",
@@ -9,6 +9,7 @@
     "23": "v",
     "29": "_"
   },
+  "maxEffort": 3,
   "efforts": {
     "0": {
       "0": 3,

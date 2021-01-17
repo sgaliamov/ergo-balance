@@ -6,14 +6,13 @@ mod recombination;
 mod score_calculator;
 
 use ed_balance::{CliSettings, Context, IBehaviour};
-use loader::*;
 pub use model::*;
 
 use crate::keyboard::{Keyboard, Mutation};
 
 impl IBehaviour<Mutation, Keyboard> for Behaviour {
     fn new(settings: &CliSettings) -> Self {
-        behaviour_new(settings)
+        loader::create(settings).unwrap()
     }
 
     fn generate(&self) -> Box<Keyboard> {

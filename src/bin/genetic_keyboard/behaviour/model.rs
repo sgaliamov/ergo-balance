@@ -4,6 +4,10 @@ use std::collections::HashMap;
 pub struct Behaviour {
     pub context: Context,
     pub sample_text: String,
-    pub frozen_keys: HashMap<u8, char>,
-    pub efforts: HashMap<u8, HashMap<u8, i32>>,
+    pub frozen_keys: FrozenKeys,
+    pub efforts: Efforts,
 }
+
+pub type Efforts = HashMap<u8, HashMap<u8, f64>>;
+
+pub type FrozenKeys = HashMap<u8, char>;
