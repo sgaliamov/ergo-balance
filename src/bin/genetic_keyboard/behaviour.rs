@@ -35,6 +35,6 @@ impl IBehaviour<Mutation, Keyboard> for Behaviour {
     }
 
     fn get_context<'a>(&'a self) -> &'a Context {
-        todo!()
+        &self.context
     }
 }

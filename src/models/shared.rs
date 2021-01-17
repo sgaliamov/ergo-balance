@@ -4,6 +4,9 @@ use structopt::StructOpt;
 
 #[derive(StructOpt)]
 pub struct CliSettings {
+    #[structopt(short = "k", long = "keyboard")]
+    pub keyboard: PathBuf,
+
     #[structopt(short = "d", long = "digraphs")]
     pub digraphs: PathBuf,
 
