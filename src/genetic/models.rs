@@ -1,11 +1,8 @@
-use std::{collections::HashSet, hash::Hash};
+use std::hash::Hash;
 
 use crate::CliSettings;
 
-pub trait IIndividual<TMutation>: Clone + Eq + Hash + Send + Sync
-where
-    TMutation: IMutation,
-{
+pub trait IIndividual<TMutation: IMutation>: Clone + Eq + Hash + Send + Sync {
     /// The kind of individual.
     fn get_kind(&self) -> String;
 
@@ -15,22 +12,14 @@ where
 
 pub trait IMutation: Sync {}
 
-pub trait IBehaviour<TMutation, TIndividual>: Sync
-where
-    TMutation: IMutation,
-    TIndividual: IIndividual<TMutation>,
-{
+pub trait IBehaviour<TMutation: IMutation, TIndividual: IIndividual<TMutation>>: Sync {
     fn new(settings: &CliSettings) -> Self;
 
     fn generate(&self) -> Box<TIndividual>;
 
     fn get_score(&self, individual: &TIndividual) -> f64;
 
-    fn cross(
-        &self,
-        individual: &TIndividual,
-        partner: &TIndividual,
-    ) -> Box<TIndividual>;
+    fn cross(&self, individual: &TIndividual, partner: &TIndividual) -> Box<TIndividual>;
 
     fn mutate(&self, individual: &TIndividual) -> Box<TIndividual>;
 
@@ -49,8 +38,6 @@ pub struct Context {
 
 impl Context {
     pub fn new(settings: &CliSettings) -> Self {
-
-
         Context {
             mutations_count: settings.mutations_count as usize,
             population_size: settings.population_size as usize,
