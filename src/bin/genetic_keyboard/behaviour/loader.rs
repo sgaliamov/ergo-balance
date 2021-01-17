@@ -25,10 +25,11 @@ fn parse_u8(str: &String) -> Option<u8> {
 
 // todo: test
 fn normalize_effort(value: f64, factor: f64) -> f64 {
+    // assumes that minimal value is 1
     (value - 1.) * factor + 1.
 }
 
-fn parse_nested(json: &Value, factor: f64) -> Option<HashMap<u8, f64>> {
+fn parse_nested_efforts(json: &Value, factor: f64) -> Option<HashMap<u8, f64>> {
     json.as_object()?
         .iter()
         .map(|(key, value)| {
@@ -39,19 +40,28 @@ fn parse_nested(json: &Value, factor: f64) -> Option<HashMap<u8, f64>> {
         .collect()
 }
 
-fn load_efforts(json: &Value) -> Option<Efforts> {
-    let max = json["maxEffort"].as_f64()?;
-    let factor = max / 5.;
-
+fn parse_efforts(json: &Value, keys_shift: u8, factor: f64) -> Option<Efforts> {
     json["efforts"]
         .as_object()?
         .iter()
         .map(|(key, value)| {
-            let key = parse_u8(key)?;
-            let value = parse_nested(value, factor)?;
+            let key = parse_u8(key)? + keys_shift;
+            let value = parse_nested_efforts(value, factor)?;
             Some((key, value))
         })
         .collect()
+}
+
+fn load_efforts(json: &Value) -> Option<Efforts> {
+    let max = json["maxEffort"].as_f64()?;
+    // assumes that max value is 5 and min value is 1.
+    let factor = max / 4.;
+
+    let mut left = parse_efforts(json, 0, factor)?;
+    let right = parse_efforts(json, 15, factor)?;
+    left.extend(right);
+
+    Some(left)
 }
 
 fn load_json(keyboard: &PathBuf) -> Option<Value> {

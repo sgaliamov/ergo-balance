@@ -6,6 +6,7 @@ pub struct Behaviour {
     pub sample_text: String,
     pub frozen_keys: FrozenKeys,
     pub efforts: Efforts,
+    pub switch_penalty: f64,
 }
 
 pub type Efforts = HashMap<u8, HashMap<u8, f64>>;

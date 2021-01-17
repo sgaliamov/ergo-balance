@@ -1,5 +1,5 @@
 use ed_balance::{IIndividual, IMutation};
-use std::hash::Hash;
+use std::{collections::HashSet, hash::Hash};
 
 #[derive(Debug, Hash, Eq, PartialEq, PartialOrd, Clone, Copy)]
 pub struct Mutation {
@@ -18,12 +18,12 @@ pub struct Keyboard {
     /// 0-14 the left part, 15-29 the right part.\
     /// The numbering like in the `ergo-layout` app.\
     /// `_` means a skipped and blocked key.
-    pub keys: Vec<char>,
+    pub keys: HashSet<char, u8>,
     pub score: f64,
 
     pub mutations: Vec<Mutation>,
     pub parent_version: String,
-    pub parent: Vec<char>,
+    pub parent: HashSet<char, u8>,
 }
 
 impl Eq for Keyboard {}

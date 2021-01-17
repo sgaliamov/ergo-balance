@@ -9,6 +9,7 @@
     "23": "v",
     "29": "_"
   },
+  "switchPenalty": 3,
   "maxEffort": 3,
   "efforts": {
     "0": {
