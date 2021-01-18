@@ -1,5 +1,6 @@
 use ed_balance::{IIndividual, IMutation};
-use std::{collections::HashSet, hash::Hash};
+use itertools::{sorted, Itertools};
+use std::{collections::HashMap, hash::Hash};
 
 #[derive(Debug, Hash, Eq, PartialEq, PartialOrd, Clone, Copy)]
 pub struct Mutation {
@@ -18,25 +19,27 @@ pub struct Keyboard {
     /// 0-14 the left part, 15-29 the right part.\
     /// The numbering like in the `ergo-layout` app.\
     /// `_` means a skipped and blocked key.
-    pub keys: HashSet<char, u8>,
+    pub keys: HashMap<char, u8>,
     pub score: f64,
 
     pub mutations: Vec<Mutation>,
     pub parent_version: String,
-    pub parent: HashSet<char, u8>,
+    pub parent: HashMap<char, u8>,
 }
 
 impl Eq for Keyboard {}
 
 impl PartialEq for Keyboard {
     fn eq(&self, other: &Self) -> bool {
-        self.keys.eq(&other.keys)
+        self.keys.iter().eq(other.keys.iter())
     }
 }
 
 impl Hash for Keyboard {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.keys.hash(state)
+        for item in &self.keys {
+            item.hash(state);
+        }
     }
 }
 
@@ -46,7 +49,13 @@ impl IIndividual<Mutation> for Keyboard {
     }
 
     fn to_string(&self) -> String {
-        let keys_string: String = self.keys.iter().collect();
+        let keys_string: String = self
+            .keys
+            .iter()
+            .sorted_by(|(_, i1), (_, i2)| i1.partial_cmp(i2).unwrap())
+            .map(|(c, _)| c)
+            .collect();
+
         format!("{}; {:.3};", keys_string, self.score)
     }
 }
