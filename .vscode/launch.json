@@ -28,6 +28,7 @@
       "type": "lldb",
       "request": "launch",
       "program": "${workspaceRoot}/target/debug/genetic_keyboard.exe",
+      "env": { "RUST_BACKTRACE": "1" },
       "args": [
         "-k",
         "${workspaceRoot}/data/keyboard.json",

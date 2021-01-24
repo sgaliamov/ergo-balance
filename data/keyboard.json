@@ -1,12 +1,12 @@
 {
-  "samplePath": "C:/Users/sgaliamov/Documents/MEGAsync/notes/samples/1.txt",
+  "samplePath": "C:/Users/sgaliamov/projects/personal/ergo-balance/data/0.1-100.result.txt",
   "frozen": {
-    "a": "10",
-    "s": "11",
-    "z": "20",
-    "x": "21",
-    "c": "22",
-    "v": "23"
+    "a": "5",
+    "s": "6",
+    "z": "10",
+    "x": "11",
+    "c": "12",
+    "v": "13"
   },
   "blocked": [15, 25, 26, 27],
   "switchPenalty": 3,

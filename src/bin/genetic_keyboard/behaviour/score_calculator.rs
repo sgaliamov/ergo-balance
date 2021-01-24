@@ -23,7 +23,13 @@ fn get_word_score(behaviour: &Behaviour, keyboard: &HashMap<char, u8>, word: &st
                 return behaviour.switch_penalty;
             }
 
-            let effort = behaviour.efforts[&key_a][&key_b];
+            let effort = behaviour
+                .efforts
+                .get(&key_a)
+                .unwrap_or_else(|| panic!("Can not find nested map for key {}", key_a))
+                .get(&key_b)
+                .unwrap_or_else(|| panic!("Can not find effort for key {}", key_b))
+                .to_owned();
 
             if key_a == key_b {
                 return effort * behaviour.same_key_penalty;

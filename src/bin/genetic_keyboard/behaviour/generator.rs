@@ -12,14 +12,14 @@ pub fn generate(this: &Behaviour) -> Box<Keyboard> {
         .collect_vec();
     letters.shuffle(rnd);
 
-    let mut positions = (1..=30 as u8)
+    let mut positions = (0..30 as u8)
         .filter(|x| !this.blocked_keys.contains(x))
         .collect_vec();
     positions.shuffle(rnd);
 
     let mut keys: Keys = letters.into_iter().zip(positions.into_iter()).collect();
     keys.extend(&this.frozen_keys);
-    debug_assert_eq!(keys.len(), 30);
+    debug_assert_eq!(keys.len(), 26);
     let version = get_version();
 
     Keyboard::new(

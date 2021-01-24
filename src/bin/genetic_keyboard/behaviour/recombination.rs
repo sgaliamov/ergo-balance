@@ -29,7 +29,10 @@ pub fn cross(this: &Behaviour, individual: &Keyboard, partner: &Keyboard) -> Box
         *keys.entry(&mutation.second).or_insert(first_char) = first_char;
     }
 
-    let keys: Keys = keys.into_iter().map(|(&key, &value)| (value, key)).collect();
+    let keys: Keys = keys
+        .into_iter()
+        .map(|(&key, &value)| (value, key))
+        .collect();
     let score = get_score(this, &keys);
 
     Keyboard::new(
