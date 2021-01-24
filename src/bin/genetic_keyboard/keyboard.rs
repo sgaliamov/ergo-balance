@@ -1,5 +1,5 @@
 use ed_balance::{IIndividual, IMutation};
-use itertools::{sorted, Itertools};
+use itertools::Itertools;
 use std::{collections::HashMap, hash::Hash};
 
 #[derive(Debug, Hash, Eq, PartialEq, PartialOrd, Clone, Copy)]

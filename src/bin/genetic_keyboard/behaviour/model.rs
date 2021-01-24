@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 pub struct Behaviour {
     pub context: Context,
-    pub sample_text: String,
+    pub words: Vec<String>,
     pub frozen_keys: FrozenKeys,
     pub efforts: Efforts,
     pub switch_penalty: f64,

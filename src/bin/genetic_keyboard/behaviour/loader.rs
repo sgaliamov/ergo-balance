@@ -1,24 +1,31 @@
 use super::{Behaviour, Efforts, FrozenKeys};
 use ed_balance::{CliSettings, Context};
+use itertools::Itertools;
 use serde_json::{self, Value};
 use std::{collections::HashMap, path::PathBuf};
 
 pub fn create(settings: &CliSettings) -> Option<Behaviour> {
     let context = Context::new(settings);
     let json = load_json(&settings.keyboard)?;
-    let sample_path = json["samplePath"].as_str()?;
-    let sample_text = std::fs::read_to_string(sample_path).ok()?;
+    let sample_text = load_text(&json)?;
     let frozen_keys = load_frozen(&json)?;
     let efforts = load_efforts(&json)?;
     let switch_penalty = json["switchPenalty"].as_f64()?;
 
     Some(Behaviour {
         context,
-        sample_text,
+        words: sample_text,
         frozen_keys,
         efforts,
         switch_penalty,
     })
+}
+
+fn load_text(json: &Value) -> Option<Vec<String>> {
+    let sample_path = json["samplePath"].as_str()?;
+    let text = std::fs::read_to_string(sample_path).ok()?;
+    let words = text.split(' ').map_into().collect_vec();
+    Some(words)
 }
 
 fn parse_u8(str: &String) -> Option<u8> {

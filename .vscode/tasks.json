@@ -26,6 +26,13 @@
         "kind": "build"
       },
       "label": "Build"
+    },
+    {
+      "label": "Clean",
+      "type": "shell",
+      "command": "cargo",
+      "args": ["clean"],
+      "problemMatcher": ["$rustc"]
     }
   ]
 }
