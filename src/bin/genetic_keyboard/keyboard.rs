@@ -4,8 +4,8 @@ use std::{collections::HashMap, hash::Hash};
 
 #[derive(Debug, Hash, Eq, PartialEq, PartialOrd, Clone, Copy)]
 pub struct Mutation {
-    pub from: u8,
-    pub to: u8,
+    pub first: u8,
+    pub second: u8,
 }
 
 impl IMutation for Mutation {}

@@ -18,16 +18,12 @@ pub fn mutate(this: &Behaviour, individual: &Keyboard) -> Box<Keyboard> {
 
     for index in 0..this.context.mutations_count {
         let second_index = keys.len() - index;
-        let (first_char, first_pos) = keys[index];
-        let (second_char, second_pos) = keys[second_index];
+        let (first_char, first) = keys[index];
+        let (second_char, second) = keys[second_index];
 
-        mutations.push(Mutation {
-            from: first_pos,
-            to: second_pos,
-        });
-
-        keys[index] = (first_char, second_pos);
-        keys[second_index] = (second_char, first_pos);
+        mutations.push(Mutation { first, second });
+        keys[index] = (first_char, second);
+        keys[second_index] = (second_char, first);
     }
 
     let version = get_version();
