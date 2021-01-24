@@ -1,13 +1,13 @@
 {
   "samplePath": "C:/Users/sgaliamov/Documents/MEGAsync/notes/samples/1.txt",
   "frozen": {
-    "10": "a",
-    "11": "s",
-    "20": "z",
-    "21": "x",
-    "22": "c",
-    "23": "v",
-    "29": "_"
+    "a": "10",
+    "s": "11",
+    "z": "20",
+    "x": "21",
+    "c": "22",
+    "v": "23",
+    "_": "29"
   },
   "switchPenalty": 3,
   "sameKeyPenalty": 1.5,

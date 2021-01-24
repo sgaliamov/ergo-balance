@@ -97,8 +97,8 @@ fn load_frozen(json: &Value) -> Option<FrozenKeys> {
         .as_object()?
         .iter()
         .map(|(key, value)| {
-            let key = parse_u8(key)?;
-            let value = value.as_str()?.chars().next()?;
+            let key = key.chars().next()?;
+            let value = value.as_i64()? as u8;
             Some((key, value))
         })
         .collect()

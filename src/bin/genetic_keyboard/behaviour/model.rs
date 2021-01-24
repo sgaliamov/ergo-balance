@@ -12,4 +12,4 @@ pub struct Behaviour {
 
 pub type Efforts = HashMap<u8, HashMap<u8, f64>>;
 
-pub type FrozenKeys = HashMap<u8, char>;
+pub type FrozenKeys = HashMap<char, u8>;
