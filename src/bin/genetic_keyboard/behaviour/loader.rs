@@ -50,11 +50,11 @@ fn normalize_effort(value: f64, factor: f64) -> f64 {
     (value - 1.) * factor + 1.
 }
 
-fn parse_nested_efforts(json: &Value, factor: f64) -> Option<HashMap<u8, f64>> {
+fn parse_nested_efforts(json: &Value, keys_shift: u8, factor: f64) -> Option<HashMap<u8, f64>> {
     json.as_object()?
         .iter()
         .map(|(key, value)| {
-            let key = parse_u8(key)?;
+            let key = parse_u8(key)? + keys_shift;
             let value = normalize_effort(value.as_f64()?, factor);
             Some((key, value))
         })
@@ -67,7 +67,7 @@ fn parse_efforts(json: &Value, keys_shift: u8, factor: f64) -> Option<Efforts> {
         .iter()
         .map(|(key, value)| {
             let key = parse_u8(key)? + keys_shift;
-            let value = parse_nested_efforts(value, factor)?;
+            let value = parse_nested_efforts(value, keys_shift, factor)?;
             Some((key, value))
         })
         .collect()
@@ -80,7 +80,6 @@ fn get_factor(max: f64) -> f64 {
 fn load_efforts(json: &Value) -> Option<Efforts> {
     let max = json["maxEffort"].as_f64()?;
     let factor = get_factor(max);
-
     let mut left = parse_efforts(json, 0, factor)?;
     let right = parse_efforts(json, 15, factor)?;
     left.extend(right);
@@ -108,6 +107,35 @@ fn load_frozen(json: &Value) -> Option<FrozenKeys> {
 #[cfg(test)]
 pub mod tests {
     use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn test_load() {
+        let json = json!({
+        "maxEffort": 5,
+        "efforts": {
+            "0": {
+                "0": 1,
+                "1": 2
+            },
+            "1": {
+                "0": 3,
+                "1": 4
+            },
+        }});
+        let actual = load_efforts(&json).unwrap();
+        let expected: Efforts = [
+            (0, [(0, 1.), (1, 2.)].iter().cloned().collect()),
+            (1, [(0, 3.), (1, 4.)].iter().cloned().collect()),
+            (15, [(15, 1.), (16, 2.)].iter().cloned().collect()),
+            (16, [(15, 3.), (16, 4.)].iter().cloned().collect()),
+        ]
+        .iter()
+        .cloned()
+        .collect();
+
+        assert_eq!(actual, expected);
+    }
 
     #[test]
     fn test_normalize_effort_for_1() {

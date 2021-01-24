@@ -1,8 +1,7 @@
+use crate::{IBehaviour, IIndividual, IMutation};
 use itertools::Itertools;
 use rayon::prelude::*;
 use std::{cmp::Ordering, marker::PhantomData};
-
-use crate::{IBehaviour, IIndividual, IMutation};
 
 pub struct GeneticAlgorithm<'a, TMutation, TIndividual, TBehaviour>
 where
@@ -87,7 +86,6 @@ where
             .collect_vec();
 
         crossed.extend(collection);
-
         crossed
     }
 }

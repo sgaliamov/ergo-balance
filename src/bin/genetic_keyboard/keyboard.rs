@@ -18,6 +18,7 @@ pub struct Keyboard {
     /// Each position represents a position on a keyboard.\
     /// 0-14 the left part, 15-29 the right part.\
     /// The numbering like in the `ergo-layout` app.\
+    /// Right part mirrored left.
     /// `_` means a skipped and blocked key.
     pub keys: HashMap<char, u8>,
     pub score: f64,
