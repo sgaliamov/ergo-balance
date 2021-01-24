@@ -5,10 +5,10 @@ use structopt::StructOpt;
 #[derive(StructOpt)]
 pub struct CliSettings {
     #[structopt(short = "k", long = "keyboard")]
-    pub keyboard: PathBuf,
+    pub keyboard: Option<PathBuf>,
 
     #[structopt(short = "d", long = "digraphs")]
-    pub digraphs: PathBuf,
+    pub digraphs: Option<PathBuf>,
 
     #[structopt(long = "frozen-left", default_value = "")]
     pub frozen_left: String,

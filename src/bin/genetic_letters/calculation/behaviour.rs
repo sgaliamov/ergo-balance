@@ -17,7 +17,8 @@ pub struct Behaviour {
 
 impl IBehaviour<Mutation, Letters> for Behaviour {
     fn new(settings: &CliSettings) -> Self {
-        let digraphs = Digraphs::load(&settings.digraphs).unwrap();
+        let path = settings.digraphs.clone().unwrap();
+        let digraphs = Digraphs::load(&path).unwrap();
         let context = Context::new(settings);
         let mut frozen_left = HashSet::with_capacity(settings.frozen_left.len());
         frozen_left.extend(settings.frozen_left.chars());

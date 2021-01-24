@@ -9,7 +9,8 @@ use std::{
 
 pub fn create(settings: &CliSettings) -> Option<Behaviour> {
     let context = Context::new(settings);
-    let json = load_json(&settings.keyboard)?;
+    let path = settings.keyboard.clone()?;
+    let json = load_json(&path)?;
     let sample_text = load_text(&json)?;
     let frozen_keys = load_frozen(&json)?;
     let efforts = load_efforts(&json)?;
