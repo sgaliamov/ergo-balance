@@ -1,16 +1,17 @@
+use crate::behaviour::Position;
 use ed_balance::{IIndividual, IMutation};
 use itertools::Itertools;
 use std::{collections::HashMap, hash::Hash};
 
 #[derive(Debug, Hash, Eq, PartialEq, PartialOrd, Clone, Copy)]
 pub struct Mutation {
-    pub first: u8,
-    pub second: u8,
+    pub first: Position,
+    pub second: Position,
 }
 
 impl IMutation for Mutation {}
 
-pub type Keys = HashMap<char, u8>;
+pub type Keys = HashMap<char, Position>;
 
 #[derive(Debug, Clone)]
 pub struct Keyboard {

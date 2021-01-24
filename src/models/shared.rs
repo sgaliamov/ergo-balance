@@ -4,6 +4,7 @@ use structopt::StructOpt;
 
 #[derive(StructOpt)]
 pub struct CliSettings {
+    /// keyboard settings
     #[structopt(short = "k", long = "keyboard")]
     pub keyboard: Option<PathBuf>,
 

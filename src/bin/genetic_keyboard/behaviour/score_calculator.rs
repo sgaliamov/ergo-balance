@@ -1,9 +1,9 @@
-use super::Behaviour;
+use super::{Behaviour, Position};
 use crate::keyboard::Keys;
 use itertools::Itertools;
 use std::collections::HashMap;
 
-fn get_word_score(behaviour: &Behaviour, keyboard: &HashMap<char, u8>, word: &str) -> f64 {
+fn get_word_score(behaviour: &Behaviour, keyboard: &HashMap<char, Position>, word: &str) -> f64 {
     let chars = word.chars().collect_vec();
 
     if chars.len() == 1 {

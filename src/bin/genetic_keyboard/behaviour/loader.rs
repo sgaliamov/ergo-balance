@@ -1,4 +1,4 @@
-use super::{Behaviour, Efforts, FrozenKeys};
+use super::{Behaviour, Efforts, FrozenKeys, Position};
 use ed_balance::{CliSettings, Context};
 use itertools::Itertools;
 use serde_json::{self, Value};
@@ -16,10 +16,10 @@ pub fn create(settings: &CliSettings) -> Option<Behaviour> {
     let efforts = load_efforts(&json)?;
     let switch_penalty = json["switchPenalty"].as_f64()?;
     let same_key_penalty = json["sameKeyPenalty"].as_f64()?;
-    let mut blocked_keys: HashSet<u8> = json["blocked"]
+    let mut blocked_keys: HashSet<Position> = json["blocked"]
         .as_array()?
         .into_iter()
-        .map(|x| x.as_u64().unwrap() as u8)
+        .map(|x| x.as_u64().unwrap() as Position)
         .collect();
     blocked_keys.extend(frozen_keys.iter().map(|(_, value)| value));
 
@@ -41,8 +41,8 @@ fn load_text(json: &Value) -> Option<Vec<String>> {
     Some(words)
 }
 
-fn parse_u8(str: &String) -> Option<u8> {
-    str.parse::<u8>().ok()
+fn parse_u8(str: &String) -> Option<Position> {
+    str.parse::<Position>().ok()
 }
 
 const MIN_VALUE: f64 = 1.;
@@ -61,7 +61,11 @@ fn normalize_effort(value: f64, factor: f64) -> f64 {
     (value - 1.) * factor + 1.
 }
 
-fn parse_nested_efforts(json: &Value, keys_shift: u8, factor: f64) -> Option<HashMap<u8, f64>> {
+fn parse_nested_efforts(
+    json: &Value,
+    keys_shift: Position,
+    factor: f64,
+) -> Option<HashMap<Position, f64>> {
     json.as_object()?
         .iter()
         .map(|(key, value)| {
@@ -72,7 +76,7 @@ fn parse_nested_efforts(json: &Value, keys_shift: u8, factor: f64) -> Option<Has
         .collect()
 }
 
-fn parse_efforts(json: &Value, keys_shift: u8, factor: f64) -> Option<Efforts> {
+fn parse_efforts(json: &Value, keys_shift: Position, factor: f64) -> Option<Efforts> {
     json["efforts"]
         .as_object()?
         .iter()
