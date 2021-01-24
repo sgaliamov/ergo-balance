@@ -2,7 +2,10 @@ use super::{Behaviour, Efforts, FrozenKeys};
 use ed_balance::{CliSettings, Context};
 use itertools::Itertools;
 use serde_json::{self, Value};
-use std::{collections::HashMap, path::PathBuf};
+use std::{
+    collections::{HashMap, HashSet},
+    path::PathBuf,
+};
 
 pub fn create(settings: &CliSettings) -> Option<Behaviour> {
     let context = Context::new(settings);
@@ -12,6 +15,12 @@ pub fn create(settings: &CliSettings) -> Option<Behaviour> {
     let efforts = load_efforts(&json)?;
     let switch_penalty = json["switchPenalty"].as_f64()?;
     let same_key_penalty = json["sameKeyPenalty"].as_f64()?;
+    let mut blocked_keys: HashSet<u8> = json["blocked"]
+        .as_array()?
+        .into_iter()
+        .map(|x| x.as_u64().unwrap() as u8)
+        .collect();
+    blocked_keys.extend(frozen_keys.iter().map(|(key, value)| value));
 
     Some(Behaviour {
         context,
@@ -20,6 +29,7 @@ pub fn create(settings: &CliSettings) -> Option<Behaviour> {
         efforts,
         switch_penalty,
         same_key_penalty,
+        blocked_keys,
     })
 }
 

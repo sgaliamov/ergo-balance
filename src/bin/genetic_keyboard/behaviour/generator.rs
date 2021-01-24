@@ -6,20 +6,20 @@ use rand::prelude::SliceRandom;
 use std::collections::HashMap;
 
 pub fn generate(this: &Behaviour) -> Box<Keyboard> {
+    let rnd = &mut rand::thread_rng();
     let mut letters = ('a'..='z')
         .filter(|x| !this.frozen_keys.contains_key(x))
         .collect_vec();
+    letters.shuffle(rnd);
 
-    letters.shuffle(&mut rand::thread_rng());
+    let mut positions = (1..=30 as u8)
+        .filter(|x| !this.blocked_keys.contains(x))
+        .collect_vec();
+    positions.shuffle(rnd);
 
-    let mut keys: HashMap<char, u8> = letters
-        .into_iter()
-        .enumerate()
-        .map(|(i, e)| (e, i as u8))
-        .collect();
-
+    let mut keys: HashMap<char, u8> = letters.into_iter().zip(positions.into_iter()).collect();
     keys.extend(&this.frozen_keys);
-
+    debug_assert_eq!(keys.len(), 30);
     let version = get_version();
 
     Keyboard::new(

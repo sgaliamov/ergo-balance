@@ -6,9 +6,9 @@
     "z": "20",
     "x": "21",
     "c": "22",
-    "v": "23",
-    "_": "29"
+    "v": "23"
   },
+  "blocked": [15, 25, 26, 27],
   "switchPenalty": 3,
   "sameKeyPenalty": 1.5,
   "maxEffort": 3,

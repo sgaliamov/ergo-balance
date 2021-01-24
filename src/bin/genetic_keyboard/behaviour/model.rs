@@ -1,10 +1,15 @@
 use ed_balance::Context;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 pub struct Behaviour {
     pub context: Context,
     pub words: Vec<String>,
+
+    /// char * position
     pub frozen_keys: FrozenKeys,
+
+    /// Includes positions of frozen keys.
+    pub blocked_keys: HashSet<u8>,
     pub efforts: Efforts,
     pub switch_penalty: f64,
     pub same_key_penalty: f64,
