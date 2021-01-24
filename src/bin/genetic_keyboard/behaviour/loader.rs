@@ -11,6 +11,7 @@ pub fn create(settings: &CliSettings) -> Option<Behaviour> {
     let frozen_keys = load_frozen(&json)?;
     let efforts = load_efforts(&json)?;
     let switch_penalty = json["switchPenalty"].as_f64()?;
+    let same_key_penalty = json["sameKeyPenalty"].as_f64()?;
 
     Some(Behaviour {
         context,
@@ -18,6 +19,7 @@ pub fn create(settings: &CliSettings) -> Option<Behaviour> {
         frozen_keys,
         efforts,
         switch_penalty,
+        same_key_penalty,
     })
 }
 
