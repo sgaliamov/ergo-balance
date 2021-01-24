@@ -1,12 +1,12 @@
 use super::{score_calculator::get_score, Behaviour};
-use crate::keyboard::Keyboard;
+use crate::keyboard::{Keyboard, Keys};
 use ed_balance::get_version;
 use itertools::Itertools;
 use rand::prelude::SliceRandom;
-use std::collections::HashMap;
 
 pub fn generate(this: &Behaviour) -> Box<Keyboard> {
     let rnd = &mut rand::thread_rng();
+
     let mut letters = ('a'..='z')
         .filter(|x| !this.frozen_keys.contains_key(x))
         .collect_vec();
@@ -17,7 +17,7 @@ pub fn generate(this: &Behaviour) -> Box<Keyboard> {
         .collect_vec();
     positions.shuffle(rnd);
 
-    let mut keys: HashMap<char, u8> = letters.into_iter().zip(positions.into_iter()).collect();
+    let mut keys: Keys = letters.into_iter().zip(positions.into_iter()).collect();
     keys.extend(&this.frozen_keys);
     debug_assert_eq!(keys.len(), 30);
     let version = get_version();

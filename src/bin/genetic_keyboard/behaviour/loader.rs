@@ -20,7 +20,7 @@ pub fn create(settings: &CliSettings) -> Option<Behaviour> {
         .into_iter()
         .map(|x| x.as_u64().unwrap() as u8)
         .collect();
-    blocked_keys.extend(frozen_keys.iter().map(|(key, value)| value));
+    blocked_keys.extend(frozen_keys.iter().map(|(_, value)| value));
 
     Some(Behaviour {
         context,
