@@ -10,6 +10,8 @@ pub struct Mutation {
 
 impl IMutation for Mutation {}
 
+pub type Keys = HashMap<char, u8>;
+
 #[derive(Debug, Clone)]
 pub struct Keyboard {
     pub version: String,
@@ -20,12 +22,32 @@ pub struct Keyboard {
     /// The numbering like in the `ergo-layout` app.\
     /// Right part mirrored left.
     /// `_` means a skipped and blocked key.
-    pub keys: HashMap<char, u8>,
+    pub keys: Keys,
     pub score: f64,
 
     pub mutations: Vec<Mutation>,
     pub parent_version: String,
-    pub parent: HashMap<char, u8>,
+    pub parent: Keys,
+}
+
+impl Keyboard {
+    pub fn new(
+        version: String,
+        keys: Keys,
+        score: f64,
+        mutations: Vec<Mutation>,
+        parent_version: String,
+        parent: Keys,
+    ) -> Box<Keyboard> {
+        box_keyboard(Keyboard {
+            version,
+            keys,
+            mutations,
+            parent_version,
+            parent,
+            score,
+        })
+    }
 }
 
 impl Eq for Keyboard {}
@@ -59,4 +81,8 @@ impl IIndividual<Mutation> for Keyboard {
 
         format!("{}; {:.3};", keys_string, self.score)
     }
+}
+
+fn box_keyboard(keyboard: Keyboard) -> Box<Keyboard> {
+    Box::new(keyboard)
 }

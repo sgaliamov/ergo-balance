@@ -20,7 +20,7 @@ impl IBehaviour<Mutation, Keyboard> for Behaviour {
     }
 
     fn get_score(&self, individual: &Keyboard) -> f64 {
-        score_calculator::get_score(&self, individual)
+        score_calculator::get_score(&self, &individual.keys)
     }
 
     fn cross(&self, individual: &Keyboard, partner: &Keyboard) -> Box<Keyboard> {
