@@ -17,7 +17,7 @@ fn get_word_score(behaviour: &Behaviour, keyboard: &HashMap<char, Position>, wor
         .map(|(a, b)| {
             let key_a = keyboard[a];
             let key_b = keyboard[b];
-            let same_part = key_a >= 15 && key_b >= 15 || key_a < 15 && key_b < 15;
+            let same_part = key_a >= 15_u8 && key_b >= 15_u8 || key_a < 15_u8 && key_b < 15_u8;
 
             if !same_part {
                 return behaviour.switch_penalty;

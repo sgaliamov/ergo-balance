@@ -35,3 +35,64 @@ impl IBehaviour<Mutation, Keyboard> for Behaviour {
         &self.context
     }
 }
+
+#[cfg(test)]
+pub mod tests {
+    use super::*;
+    use std::collections::{HashMap, HashSet};
+
+    fn default_context() -> Context {
+        Context {
+            mutations_count: 2,
+            population_size: 10,
+            children_count: 10,
+            generations_count: 10,
+            results_count: 10,
+            left_count: 15,
+            repeats_count: 10,
+        }
+    }
+
+    fn default_efforts() -> Efforts {
+        let efforts: Efforts = [
+            (0, [(0, 1.), (1, 2.), (2, 3.)].iter().cloned().collect()),
+            (1, [(0, 4.), (1, 5.), (2, 6.)].iter().cloned().collect()),
+            (2, [(0, 7.), (1, 8.), (2, 9.)].iter().cloned().collect()),
+        ]
+        .iter()
+        .cloned()
+        .collect();
+
+        efforts
+    }
+
+    fn default_behaviour() -> Behaviour {
+        Behaviour {
+            context: default_context(),
+            blocked_keys: HashSet::new(),
+            efforts: default_efforts(),
+            frozen_keys: FrozenKeys::new(),
+            same_key_penalty: 2.,
+            switch_penalty: 3.,
+            words: ["abc".to_string()].to_vec(),
+        }
+    }
+
+    #[test]
+    fn should_mutate() {
+        let behaviour = default_behaviour();
+        let individual = Keyboard {
+            keys: [('a', 0_u8), ('b', 1_u8), ('c', 2_u8)].iter().cloned().collect(),
+            mutations: Vec::new(),
+            parent: HashMap::new(),
+            parent_version: "parent_version".to_string(),
+            score: 0.,
+            version: "version".to_string(),
+        };
+
+        let actual = mutator::mutate(&behaviour, &individual);
+
+        assert_ne!(actual.keys, individual.keys);
+        assert_eq!(actual.mutations.len(), behaviour.context.mutations_count);
+    }
+}
