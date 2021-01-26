@@ -9,6 +9,8 @@ pub fn generate(this: &Behaviour) -> Box<Keyboard> {
     let version = get_version();
     let keys = generate_keys(&this.frozen_keys, &this.blocked_keys);
 
+    debug_assert_eq!(keys.len(), 26);
+
     Keyboard::new(
         version.clone(),
         keys.clone(),

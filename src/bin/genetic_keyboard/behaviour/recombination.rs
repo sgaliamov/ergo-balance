@@ -33,6 +33,7 @@ pub fn cross(this: &Behaviour, individual: &Keyboard, partner: &Keyboard) -> Box
         .into_iter()
         .map(|(&key, &value)| (value, key))
         .collect();
+
     let score = get_score(this, &keys);
 
     Keyboard::new(
