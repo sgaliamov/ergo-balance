@@ -16,12 +16,11 @@ pub fn create(settings: &CliSettings) -> Option<Behaviour> {
     let efforts = load_efforts(&json)?;
     let switch_penalty = json["switchPenalty"].as_f64()?;
     let same_key_penalty = json["sameKeyPenalty"].as_f64()?;
-    let mut blocked_keys: HashSet<Position> = json["blocked"]
+    let blocked_keys: HashSet<Position> = json["blocked"]
         .as_array()?
         .into_iter()
         .map(|x| x.as_u64().unwrap() as Position)
         .collect();
-    blocked_keys.extend(frozen_keys.iter().map(|(_, value)| value));
 
     Some(Behaviour {
         context,
