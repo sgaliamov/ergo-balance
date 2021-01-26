@@ -71,7 +71,7 @@ pub mod tests {
             context: default_context(),
             blocked_keys: HashSet::new(),
             efforts: default_efforts(),
-            frozen_keys: FrozenKeys::new(),
+            frozen_keys: [('a', 1_u8)].iter().cloned().collect(),
             same_key_penalty: 2.,
             switch_penalty: 3.,
             words: ["abc".to_string()].to_vec(),
@@ -82,7 +82,10 @@ pub mod tests {
     fn should_mutate() {
         let behaviour = default_behaviour();
         let individual = Keyboard {
-            keys: [('a', 0_u8), ('b', 1_u8), ('c', 2_u8)].iter().cloned().collect(),
+            keys: [('a', 0_u8), ('b', 1_u8), ('c', 2_u8)]
+                .iter()
+                .cloned()
+                .collect(),
             mutations: Vec::new(),
             parent: HashMap::new(),
             parent_version: "parent_version".to_string(),
@@ -92,6 +95,7 @@ pub mod tests {
 
         let actual = mutator::mutate(&behaviour, &individual);
 
+        assert_eq!(actual.keys.len(), 3);
         assert_ne!(actual.keys, individual.keys);
         assert_eq!(actual.mutations.len(), behaviour.context.mutations_count);
     }

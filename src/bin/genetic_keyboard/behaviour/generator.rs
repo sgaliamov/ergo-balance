@@ -36,10 +36,11 @@ fn generate_keys(frozen_keys: &FrozenKeys, blocked_keys: &HashSet<Position>) -> 
         .collect_vec();
     positions.shuffle(rnd);
 
-    let mut keys: Keys = letters.into_iter().zip(positions.into_iter()).collect();
-    keys.extend(frozen_keys);
-
-    keys
+    letters
+        .into_iter()
+        .zip(positions.into_iter())
+        .merge(frozen_keys.clone())
+        .collect()
 }
 
 #[cfg(test)]

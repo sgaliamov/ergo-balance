@@ -27,7 +27,8 @@ pub fn mutate(this: &Behaviour, individual: &Keyboard) -> Box<Keyboard> {
     }
 
     let version = get_version();
-    let keys: Keys = keys.into_iter().collect();
+    let keys: Keys = keys.into_iter().merge(this.frozen_keys.clone()).collect();
+    debug_assert_eq!(keys.len(), individual.keys.len());
     let score = get_score(this, &keys);
 
     Keyboard::new(
