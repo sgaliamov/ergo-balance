@@ -73,14 +73,33 @@ impl IIndividual<Mutation> for Keyboard {
     }
 
     fn to_string(&self) -> String {
-        let keys_string: String = self
+        let sorted = self
             .keys
             .iter()
-            .sorted_by(|(_, i1), (_, i2)| i1.partial_cmp(i2).unwrap())
-            .map(|(c, _)| c)
-            .collect();
+            .sorted_by(|(_, i1), (_, i2)| i1.cmp(i2))
+            .collect_vec();
 
-        format!("{}; {:.3};", keys_string, self.score)
+        let left = sorted
+            .iter()
+            .take(15)
+            .group_by(|(_, &p)| p / 5)
+            .into_iter()
+            .map(|(_, x)| x.map(|(c, _)| c).join(""))
+            .join(" ");
+
+        let right = sorted
+            .iter()
+            .skip(15)
+            .group_by(|(_, &p)| p / 5)
+            .into_iter()
+            .map(|(_, x)| {
+                x.sorted_by(|(_, &i1), (_, &i2)| i2.cmp(&i1))
+                    .map(|(c, _)| c)
+                    .join("")
+            })
+            .join(" ");
+
+        format!("{} | {}; {:.3};", left, right, self.score)
     }
 }
 
