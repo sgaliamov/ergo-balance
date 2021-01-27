@@ -172,6 +172,14 @@ impl IBehaviour<Mutation, Letters> for Behaviour {
     fn get_context<'a>(&'a self) -> &'a Context {
         &self.context
     }
+
+    fn load() -> std::io::Result<Vec<Box<Letters>>> {
+        Ok(Vec::new())
+    }
+
+    fn save(_: &Vec<Box<Letters>>) -> std::io::Result<()> {
+        Ok(())
+    }
 }
 
 #[cfg(test)]

@@ -15,6 +15,10 @@ pub trait IMutation: Sync {}
 pub trait IBehaviour<TMutation: IMutation, TIndividual: IIndividual<TMutation>>: Sync {
     fn new(settings: &CliSettings) -> Self;
 
+    fn load() -> std::io::Result<Vec<Box<TIndividual>>>;
+
+    fn save(individuals: &Vec<Box<TIndividual>>) -> std::io::Result<()>;
+
     fn generate(&self) -> Box<TIndividual>;
 
     fn get_score(&self, individual: &TIndividual) -> f64;

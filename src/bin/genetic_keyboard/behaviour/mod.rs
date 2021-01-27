@@ -5,9 +5,10 @@ mod mutator;
 mod recombination;
 mod score_calculator;
 
-use ed_balance::{CliSettings, Context, IBehaviour};
+use ed_balance::{CliSettings, Context, IBehaviour, IIndividual};
+use itertools::Itertools;
 pub use model::*;
-use std::cmp::Ordering;
+use std::{cmp::Ordering, fs::File, io::Write};
 
 use crate::keyboard::{Keyboard, Mutation};
 
@@ -41,6 +42,19 @@ impl IBehaviour<Mutation, Keyboard> for Behaviour {
         let b_total = self.get_score(b);
 
         a_total.partial_cmp(&b_total).unwrap()
+    }
+
+    fn load() -> std::io::Result<Vec<Box<Keyboard>>> {
+        Ok(Vec::new())
+    }
+
+    fn save(individuals: &Vec<Box<Keyboard>>) -> std::io::Result<()> {
+        let text = individuals.iter().map(|x| x.to_string()).join("\n");
+        let mut file = File::create("data/keyboards.csv")?;
+        file.write_all(text.as_bytes())?;
+        file.sync_all()?;
+
+        Ok(())
     }
 }
 

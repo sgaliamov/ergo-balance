@@ -34,14 +34,16 @@ where
         let context = behaviour.get_context();
         let algorithm = GeneticAlgorithm::new(&behaviour);
 
-        let mut population = (0..context.population_size)
+        let mut population: Vec<_> = (0..context.population_size)
             .into_iter()
             .map(|_| behaviour.generate())
             .collect();
+        population.extend(TBehaviour::load().unwrap());
 
         let mut prev: DateTime<Utc> = Utc::now();
         let mut prev_result = Vec::<Box<TIndividual>>::new();
         let mut repeats_counter = 0;
+
         for index in 0..context.generations_count {
             population = algorithm.run(&mut population).expect("All died!");
 
@@ -70,6 +72,8 @@ where
                 pb_main.set_message(&format!("[repeats: {}]", repeats_counter + 1));
                 break;
             }
+
+            TBehaviour::save(&population).unwrap();
         }
 
         pb_main.finish();
