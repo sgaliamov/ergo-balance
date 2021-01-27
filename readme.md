@@ -8,6 +8,5 @@ Don't ask why...
 
 ## To do
 
-1. Remove duplicates.
-1. Save and load results.
 1. Make keys more balanced.
+1. Save and load results.

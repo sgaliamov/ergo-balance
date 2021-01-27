@@ -51,18 +51,31 @@ impl Keyboard {
     }
 }
 
-impl Eq for Keyboard {}
-
 impl PartialEq for Keyboard {
     fn eq(&self, other: &Self) -> bool {
-        self.keys.iter().eq(other.keys.iter())
+        if self.keys.len() != other.keys.len() {
+            return false;
+        }
+
+        for (c, p) in &self.keys {
+            if let Some(other_value) = other.keys.get(c) {
+                if other_value != p {
+                    return false;
+                }
+            }
+        }
+
+        true
     }
 }
 
+impl Eq for Keyboard {}
+
 impl Hash for Keyboard {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        for item in &self.keys {
-            item.hash(state);
+        for (&c, &p) in self.keys.iter().sorted_by_key(|(&c, _)| c).into_iter() {
+            c.hash(state);
+            p.hash(state);
         }
     }
 }
@@ -105,4 +118,53 @@ impl IIndividual<Mutation> for Keyboard {
 
 fn box_keyboard(keyboard: Keyboard) -> Box<Keyboard> {
     Box::new(keyboard)
+}
+
+#[cfg(test)]
+pub mod tests {
+    use super::*;
+
+    #[test]
+    fn should_filter_unique() {
+        let k1 = Keyboard {
+            keys: [('a', 0_u8), ('b', 1_u8), ('c', 2_u8)]
+                .iter()
+                .cloned()
+                .collect(),
+            mutations: [Mutation {
+                first: 1,
+                second: 2,
+            }]
+            .to_vec(),
+            parent: [('a', 0_u8), ('b', 1_u8), ('c', 2_u8)]
+                .iter()
+                .cloned()
+                .collect(),
+            parent_version: "parent_version".to_string(),
+            score: 1.,
+            version: "version".to_string(),
+        };
+
+        let k2 = Keyboard {
+            keys: [('a', 0_u8), ('b', 1_u8), ('c', 2_u8)]
+                .iter()
+                .cloned()
+                .collect(),
+            mutations: [Mutation {
+                first: 3,
+                second: 2,
+            }]
+            .to_vec(),
+            parent: [('a', 0_u8)].iter().cloned().collect(),
+            parent_version: "parent_version2".to_string(),
+            score: 2.,
+            version: "version2".to_string(),
+        };
+
+        assert_eq!(&k1, &k2);
+
+        let vec = [k1, k2].iter().cloned().unique().collect_vec();
+
+        assert_eq!(vec.len(), 1);
+    }
 }
