@@ -38,7 +38,7 @@ where
             .into_iter()
             .map(|_| behaviour.generate())
             .collect();
-        population.extend(TBehaviour::load().unwrap());
+        population.extend(behaviour.load().unwrap());
 
         let mut prev: DateTime<Utc> = Utc::now();
         let mut prev_result = Vec::<Box<TIndividual>>::new();

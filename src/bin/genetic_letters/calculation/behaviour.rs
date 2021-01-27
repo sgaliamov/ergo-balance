@@ -173,7 +173,7 @@ impl IBehaviour<Mutation, Letters> for Behaviour {
         &self.context
     }
 
-    fn load() -> std::io::Result<Vec<Box<Letters>>> {
+    fn load(&self) -> std::io::Result<Vec<Box<Letters>>> {
         Ok(Vec::new())
     }
 
