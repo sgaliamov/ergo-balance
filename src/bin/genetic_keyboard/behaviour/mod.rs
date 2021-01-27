@@ -7,6 +7,7 @@ mod score_calculator;
 
 use ed_balance::{CliSettings, Context, IBehaviour};
 pub use model::*;
+use std::cmp::Ordering;
 
 use crate::keyboard::{Keyboard, Mutation};
 
@@ -33,6 +34,13 @@ impl IBehaviour<Mutation, Keyboard> for Behaviour {
 
     fn get_context<'a>(&'a self) -> &'a Context {
         &self.context
+    }
+
+    fn score_cmp(&self, a: &Keyboard, b: &Keyboard) -> Ordering {
+        let a_total = self.get_score(a);
+        let b_total = self.get_score(b);
+
+        a_total.partial_cmp(&b_total).unwrap()
     }
 }
 

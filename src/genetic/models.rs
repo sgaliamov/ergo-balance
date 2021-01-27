@@ -1,4 +1,4 @@
-use std::hash::Hash;
+use std::{cmp::Ordering, hash::Hash};
 
 use crate::CliSettings;
 
@@ -24,6 +24,13 @@ pub trait IBehaviour<TMutation: IMutation, TIndividual: IIndividual<TMutation>>:
     fn mutate(&self, individual: &TIndividual) -> Box<TIndividual>;
 
     fn get_context<'a>(&'a self) -> &'a Context;
+
+    fn score_cmp(&self, a: &TIndividual, b: &TIndividual) -> Ordering {
+        let a_total = self.get_score(a);
+        let b_total = self.get_score(b);
+
+        b_total.partial_cmp(&a_total).unwrap()
+    }
 }
 
 pub struct Context {

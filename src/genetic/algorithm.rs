@@ -1,7 +1,7 @@
 use crate::{IBehaviour, IIndividual, IMutation};
 use itertools::Itertools;
 use rayon::prelude::*;
-use std::{cmp::Ordering, marker::PhantomData};
+use std::marker::PhantomData;
 
 pub struct GeneticAlgorithm<'a, TMutation, TIndividual, TBehaviour>
 where
@@ -45,7 +45,7 @@ where
         let offspring: Vec<_> = mutants
             .into_iter()
             .unique()
-            .sorted_by(|a, b| self.score_cmp(a, b))
+            .sorted_by(|a, b| self.behaviour.score_cmp(a, b))
             .group_by(|x| x.get_kind())
             .into_iter()
             .map(|(_, group)| group.collect())
@@ -55,7 +55,7 @@ where
             .collect::<Vec<_>>()
             .into_iter()
             .unique()
-            .sorted_by(|a, b| self.score_cmp(a, b))
+            .sorted_by(|a, b| self.behaviour.score_cmp(a, b))
             .into_iter()
             .take(context.population_size)
             .collect();
@@ -65,13 +65,6 @@ where
         }
 
         Ok(offspring)
-    }
-
-    fn score_cmp(&self, a: &TIndividual, b: &TIndividual) -> Ordering {
-        let a_total = self.behaviour.get_score(a);
-        let b_total = self.behaviour.get_score(b);
-
-        b_total.partial_cmp(&a_total).unwrap()
     }
 
     fn recombine(&self, collection: Vec<Box<TIndividual>>) -> Vec<Box<TIndividual>> {
