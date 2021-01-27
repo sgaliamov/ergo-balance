@@ -28,14 +28,11 @@
       "label": "Build"
     },
     {
-      "type": "cargo",
-      "subcommand": "test",
-      "problemMatcher": ["$rustc"],
-      "group": {
-        "kind": "test",
-        "isDefault": true
-      },
-      "label": "Default tests"
+      "label": "Clean",
+      "type": "shell",
+      "command": "cargo",
+      "args": ["clean"],
+      "problemMatcher": ["$rustc"]
     }
   ]
 }

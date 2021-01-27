@@ -7,7 +7,7 @@ use structopt::StructOpt;
 
 fn main() {
     let args = CliSettings::from_args();
-    if let Err(e) = run(&args) {
+    if let Err(e) = run(args) {
         eprintln!("Calculations failed: {:#?}", e);
         process::exit(1);
     }

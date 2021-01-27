@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug genetic",
+      "name": "Debug genetic letters",
       "type": "lldb",
       "request": "launch",
       "program": "${workspaceRoot}/target/debug/genetic_letters.exe",
@@ -21,6 +21,25 @@
         "20",
         "-l",
         "12"
+      ]
+    },
+    {
+      "name": "Debug genetic keyboard",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceRoot}/target/debug/genetic_keyboard.exe",
+      "env": { "RUST_BACKTRACE": "1" },
+      "args": [
+        "-k",
+        "${workspaceRoot}/data/keyboard.dev.json",
+        "-p",
+        "10",
+        "-g",
+        "10",
+        "-m",
+        "2",
+        "-c",
+        "2"
       ]
     }
   ]

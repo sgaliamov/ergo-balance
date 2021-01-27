@@ -31,9 +31,10 @@ where
     let settings = Arc::clone(&settings);
     let _ = thread::spawn(move || {
         let behaviour = TBehaviour::new(&settings);
+        let context = behaviour.get_context();
         let algorithm = GeneticAlgorithm::new(&behaviour);
 
-        let mut population = (0..settings.population_size)
+        let mut population = (0..context.population_size)
             .into_iter()
             .map(|_| behaviour.generate())
             .collect();
@@ -41,7 +42,7 @@ where
         let mut prev: DateTime<Utc> = Utc::now();
         let mut prev_result = Vec::<Box<TIndividual>>::new();
         let mut repeats_counter = 0;
-        for index in 0..settings.generations_count {
+        for index in 0..context.generations_count {
             population = algorithm.run(&mut population).expect("All died!");
 
             if let Some(date) = render_progress(
@@ -50,7 +51,7 @@ where
                 &pb_main,
                 &pb_letters,
                 &population,
-                settings.generations_count,
+                context.generations_count,
             ) {
                 prev = date
             }
@@ -59,8 +60,8 @@ where
                 repeats_counter,
                 &prev_result,
                 &population,
-                settings.results_count.into(),
-                settings.repeats_count,
+                context.results_count,
+                context.repeats_count,
             ) {
                 prev_result = top_results;
                 repeats_counter = repeats;

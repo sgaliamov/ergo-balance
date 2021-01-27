@@ -3,7 +3,7 @@ use std::hash::Hash;
 
 pub type LettersPointer = Box<Letters>;
 
-#[derive(Debug, Hash, Eq, PartialEq, PartialOrd, Clone, Copy)]
+#[derive(Hash, Eq, PartialEq, Clone, Copy)]
 pub struct Mutation {
     pub left: char,
     pub right: char,
@@ -11,7 +11,7 @@ pub struct Mutation {
 
 impl IMutation for Mutation {}
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct Letters {
     pub version: String,
     pub left: Vec<char>,
@@ -25,34 +25,12 @@ pub struct Letters {
 }
 
 impl IIndividual<Mutation> for Letters {
-    fn get_mutations(&self) -> &Vec<Mutation> {
-        &self.mutations
-    }
-
-    fn get_parent_version(&self) -> String {
+    fn get_kind(&self) -> String {
         self.parent_version.clone()
     }
 
     fn to_string(&self) -> String {
         format_result(&self.left, &self.right, self.left_score, self.right_score)
-    }
-}
-
-impl Eq for Letters {}
-
-impl PartialEq for Letters {
-    fn eq(&self, other: &Letters) -> bool {
-        self.left.eq(&other.left) && self.right.eq(&other.right)
-    }
-}
-
-impl Hash for Letters {
-    fn hash<H>(&self, state: &mut H)
-    where
-        H: std::hash::Hasher,
-    {
-        self.left.hash(state);
-        self.right.hash(state);
     }
 }
 
@@ -87,20 +65,24 @@ impl Letters {
             parent_right,
         })
     }
+}
 
-    // pub fn clone(&self) -> LettersPointer {
-    //     box_letters(Letters {
-    //         left: self.left.clone(),
-    //         right: self.right.clone(),
-    //         left_score: self.left_score,
-    //         right_score: self.right_score,
-    //         version: self.version.clone(),
-    //         mutations: self.mutations.clone(),
-    //         parent_version: self.parent_version.clone(),
-    //         parent_left: self.parent_left.clone(),
-    //         parent_right: self.parent_right.clone(),
-    //     })
-    // }
+impl Eq for Letters {}
+
+impl PartialEq for Letters {
+    fn eq(&self, other: &Letters) -> bool {
+        self.left.eq(&other.left) && self.right.eq(&other.right)
+    }
+}
+
+impl Hash for Letters {
+    fn hash<H>(&self, state: &mut H)
+    where
+        H: std::hash::Hasher,
+    {
+        self.left.hash(state);
+        self.right.hash(state);
+    }
 }
 
 fn box_letters(letters: Letters) -> LettersPointer {

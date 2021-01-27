@@ -6,30 +6,44 @@ use ed_balance::{
 };
 use itertools::{min, Itertools};
 use rand::{prelude::SliceRandom, thread_rng};
+use std::collections::HashSet;
 
-pub struct LettersBehaviour {
+pub struct Behaviour {
     pub context: Context,
     pub digraphs: Digraphs,
+    pub frozen_left: HashSet<char>,
+    pub frozen_right: HashSet<char>,
 }
 
-impl IBehaviour<Mutation, Letters> for LettersBehaviour {
+impl IBehaviour<Mutation, Letters> for Behaviour {
     fn new(settings: &CliSettings) -> Self {
-        let digraphs = Digraphs::load(&settings.digraphs).unwrap();
+        let path = settings.digraphs.clone().unwrap();
+        let digraphs = Digraphs::load(&path).unwrap();
         let context = Context::new(settings);
+        let mut frozen_left = HashSet::with_capacity(settings.frozen_left.len());
+        frozen_left.extend(settings.frozen_left.chars());
 
-        LettersBehaviour { digraphs, context }
+        let mut frozen_right = HashSet::with_capacity(settings.frozen_right.len());
+        frozen_right.extend(settings.frozen_right.chars());
+
+        Behaviour {
+            digraphs,
+            context,
+            frozen_left,
+            frozen_right,
+        }
     }
 
     fn generate(&self) -> LettersPointer {
         let context = &self.context;
         let mut all = ('a'..='z')
-            .filter(|&x| !context.frozen_right.contains(&x))
-            .filter(|&x| !context.frozen_left.contains(&x))
+            .filter(|&x| !self.frozen_right.contains(&x))
+            .filter(|&x| !self.frozen_left.contains(&x))
             .collect_vec();
 
         all.shuffle(&mut rand::thread_rng());
 
-        let mut left = context.frozen_left.iter().map(|&x| x).collect_vec();
+        let mut left = self.frozen_left.iter().map(|&x| x).collect_vec();
         left.append(
             &mut all
                 .iter()
@@ -38,7 +52,7 @@ impl IBehaviour<Mutation, Letters> for LettersBehaviour {
                 .collect(),
         );
 
-        let mut right = context.frozen_right.iter().map(|&x| x).collect_vec();
+        let mut right = self.frozen_right.iter().map(|&x| x).collect_vec();
         right.append(
             &mut all
                 .iter()
@@ -65,13 +79,13 @@ impl IBehaviour<Mutation, Letters> for LettersBehaviour {
         get_score(individual.left_score, individual.right_score)
     }
 
-    fn cross(&self, individual: &Letters, partner_mutations: &Vec<Mutation>) -> LettersPointer {
+    fn cross(&self, individual: &Letters, partner: &Letters) -> LettersPointer {
         let mut left = individual.parent_left.clone();
         let mut right = individual.parent_right.clone();
         let mut mutations: Vec<_> = individual
             .mutations
             .iter()
-            .chain(partner_mutations.iter())
+            .chain(partner.mutations.iter())
             .unique()
             .map(|&x| x)
             .collect();
@@ -110,7 +124,7 @@ impl IBehaviour<Mutation, Letters> for LettersBehaviour {
         let mut left = individual
             .left
             .iter()
-            .filter(|&x| !context.frozen_left.contains(x))
+            .filter(|&x| !self.frozen_left.contains(x))
             .map(|&x| x)
             .collect_vec();
         left.shuffle(&mut rng);
@@ -118,7 +132,7 @@ impl IBehaviour<Mutation, Letters> for LettersBehaviour {
         let mut right = individual
             .right
             .iter()
-            .filter(|&x| !context.frozen_right.contains(x))
+            .filter(|&x| !self.frozen_right.contains(x))
             .map(|&x| x)
             .collect_vec();
         right.shuffle(&mut rng);
@@ -140,8 +154,8 @@ impl IBehaviour<Mutation, Letters> for LettersBehaviour {
             });
         }
 
-        left.extend(&context.frozen_left.iter().map(|&x| x).collect_vec());
-        right.extend(&context.frozen_right.iter().map(|&x| x).collect_vec());
+        left.extend(&self.frozen_left.iter().map(|&x| x).collect_vec());
+        right.extend(&self.frozen_right.iter().map(|&x| x).collect_vec());
 
         Letters::new(
             get_version(),
@@ -169,8 +183,6 @@ pub mod tests {
 
     fn default_context() -> Context {
         Context {
-            frozen_left: HashSet::new(),
-            frozen_right: HashSet::new(),
             mutations_count: 4,
             population_size: 10,
             children_count: 10,
@@ -186,7 +198,12 @@ pub mod tests {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
         let context = default_context();
-        let behaviour = LettersBehaviour { digraphs, context };
+        let behaviour = Behaviour {
+            digraphs,
+            context,
+            frozen_right: HashSet::new(),
+            frozen_left: HashSet::new(),
+        };
         let a = behaviour.generate();
         let b = behaviour.generate();
         let clone = a.clone();
@@ -203,7 +220,12 @@ pub mod tests {
         let digraphs = Digraphs::new(&json.as_object().unwrap());
         let mut context = default_context();
         context.mutations_count = 1;
-        let behaviour = LettersBehaviour { digraphs, context };
+        let behaviour = Behaviour {
+            digraphs,
+            context,
+            frozen_right: HashSet::new(),
+            frozen_left: HashSet::new(),
+        };
 
         let target = behaviour.generate();
         let actual = behaviour.mutate(&target);
@@ -216,7 +238,12 @@ pub mod tests {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
         let context = default_context();
-        let behaviour = LettersBehaviour { digraphs, context };
+        let behaviour = Behaviour {
+            digraphs,
+            context,
+            frozen_right: HashSet::new(),
+            frozen_left: HashSet::new(),
+        };
         let target = behaviour.generate();
         let copy = target.left.clone();
         let actual = behaviour.mutate(&target);
@@ -230,7 +257,12 @@ pub mod tests {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
         let context = default_context();
-        let behaviour = LettersBehaviour { digraphs, context };
+        let behaviour = Behaviour {
+            digraphs,
+            context,
+            frozen_right: HashSet::new(),
+            frozen_left: HashSet::new(),
+        };
         let target = behaviour.generate();
 
         let actual = behaviour.mutate(&target);
@@ -244,7 +276,12 @@ pub mod tests {
         let json = json!({});
         let digraphs = Digraphs::new(&json.as_object().unwrap());
         let context = default_context();
-        let behaviour = LettersBehaviour { digraphs, context };
+        let behaviour = Behaviour {
+            digraphs,
+            context,
+            frozen_right: HashSet::new(),
+            frozen_left: HashSet::new(),
+        };
         let letters = behaviour.generate();
 
         let target = to_sorted_string(&letters.left);

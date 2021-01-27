@@ -1,10 +1,9 @@
+use crate::{IBehaviour, IIndividual, IMutation};
 use itertools::Itertools;
 use rayon::prelude::*;
-use std::{cmp::Ordering, marker::PhantomData};
+use std::marker::PhantomData;
 
-use crate::{IBehaviour, IIndividual, IMutation};
-
-pub struct GeneticAlgorithm<'a,TMutation, TIndividual, TBehaviour>
+pub struct GeneticAlgorithm<'a, TMutation, TIndividual, TBehaviour>
 where
     TMutation: IMutation,
     TIndividual: IIndividual<TMutation>,
@@ -15,7 +14,8 @@ where
     phantom_individual: PhantomData<TIndividual>,
 }
 
-impl<'a, TMutation, TIndividual, TBehaviour> GeneticAlgorithm<'a, TMutation, TIndividual, TBehaviour>
+impl<'a, TMutation, TIndividual, TBehaviour>
+    GeneticAlgorithm<'a, TMutation, TIndividual, TBehaviour>
 where
     TMutation: IMutation,
     TIndividual: IIndividual<TMutation>,
@@ -45,17 +45,17 @@ where
         let offspring: Vec<_> = mutants
             .into_iter()
             .unique()
-            .sorted_by(|a, b| self.score_cmp(a, b))
-            .group_by(|x| x.get_parent_version())
+            .sorted_by(|a, b| self.behaviour.score_cmp(a, b))
+            .group_by(|x| x.get_kind())
             .into_iter()
             .map(|(_, group)| group.collect())
             .collect::<Vec<_>>()
             .into_par_iter()
             .flat_map(|group| self.recombine(group))
-            .collect::<Vec<Box<TIndividual>>>()
+            .collect::<Vec<_>>()
             .into_iter()
             .unique()
-            .sorted_by(|a, b| self.score_cmp(a, b))
+            .sorted_by(|a, b| self.behaviour.score_cmp(a, b))
             .into_iter()
             .take(context.population_size)
             .collect();
@@ -67,13 +67,6 @@ where
         Ok(offspring)
     }
 
-    fn score_cmp(&self, a: &TIndividual, b: &TIndividual) -> Ordering {
-        let a_total = self.behaviour.get_score(a);
-        let b_total = self.behaviour.get_score(b);
-
-        b_total.partial_cmp(&a_total).unwrap()
-    }
-
     fn recombine(&self, collection: Vec<Box<TIndividual>>) -> Vec<Box<TIndividual>> {
         if collection.len() == 1 {
             return collection;
@@ -82,11 +75,10 @@ where
         let mut crossed = collection
             .iter()
             .tuple_windows()
-            .map(|(a, b)| self.behaviour.cross(&a, &b.get_mutations()))
+            .map(|(a, b)| self.behaviour.cross(&a, &b))
             .collect_vec();
 
         crossed.extend(collection);
-
         crossed
     }
 }
