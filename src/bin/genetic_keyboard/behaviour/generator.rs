@@ -21,7 +21,6 @@ pub fn generate(this: &Behaviour) -> Box<Keyboard> {
     )
 }
 
-/// expected that `blocked_keys` contains values of `frozen_keys`
 fn generate_keys(frozen_keys: &FrozenKeys, blocked_keys: &HashSet<Position>) -> Keys {
     let rnd = &mut rand::thread_rng();
     let mut letters = ('a'..='z')

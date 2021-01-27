@@ -1,3 +1,2 @@
-iukye aswjg zxcvo | lpnh rqbfm td; 17729.250;
-iykue asgjw zxcvo | lpnh rqbfm td; 17699.000;
-iukye aswqo zxcvg | lpnh rjbfm td; 17693.000;
+hntio asler zxcvd | qypm jfwbu kg; 5591.750;
+hntio asler zxcvd | kmpq wufby gj; 5593.250;
