@@ -1,3 +1,5 @@
+cargo +nightly build --release --out-dir=./target/publish -Z unstable-options
+
 clear
 
 ./target/publish/genetic_keyboard.exe \

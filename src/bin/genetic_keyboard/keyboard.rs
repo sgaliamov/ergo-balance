@@ -99,7 +99,7 @@ impl IIndividual<Mutation> for Keyboard {
             })
             .join(" ");
 
-        format!("{} | {}; {:.3};", left, right, self.score)
+        format!("{}  {}; {:.3};", left, right, self.score)
     }
 }
 
