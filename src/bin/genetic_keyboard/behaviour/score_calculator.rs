@@ -6,12 +6,9 @@ use std::collections::HashMap;
 fn get_word_score(behaviour: &Behaviour, keyboard: &HashMap<char, Position>, word: &str) -> f64 {
     let chars = word.chars().collect_vec();
 
-    if chars.len() == 1 {
-        let key = keyboard[&chars[0]];
-        return behaviour.efforts[&key][&key];
-    }
-
-    chars
+    let key = keyboard[&chars[0]];
+    let first = behaviour.efforts[&key][&key];
+    let sum: f64 = chars
         .iter()
         .tuple_windows()
         .map(|(a, b)| {
@@ -23,13 +20,7 @@ fn get_word_score(behaviour: &Behaviour, keyboard: &HashMap<char, Position>, wor
                 return behaviour.switch_penalty;
             }
 
-            let effort = behaviour
-                .efforts
-                .get(&key_a)
-                .unwrap_or_else(|| panic!("Can not find nested map for key {}", key_a))
-                .get(&key_b)
-                .unwrap_or_else(|| panic!("Can not find effort for key {}", key_b))
-                .to_owned();
+            let effort = behaviour.efforts[&key_a][&key_b];
 
             if key_a == key_b {
                 return effort * behaviour.same_key_penalty;
@@ -37,7 +28,9 @@ fn get_word_score(behaviour: &Behaviour, keyboard: &HashMap<char, Position>, wor
 
             effort
         })
-        .sum()
+        .sum();
+
+    sum + first
 }
 
 pub fn get_score(this: &Behaviour, keyboard: &Keys) -> f64 {
