@@ -31,15 +31,15 @@
       "env": { "RUST_BACKTRACE": "1" },
       "args": [
         "-k",
-        "${workspaceRoot}/data/keyboard.json",
+        "${workspaceRoot}/data/keyboard.dev.json",
         "-p",
-        "100",
+        "10",
         "-g",
         "10",
         "-m",
         "2",
         "-c",
-        "4"
+        "2"
       ]
     }
   ]
