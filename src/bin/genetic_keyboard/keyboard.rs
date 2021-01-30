@@ -24,7 +24,7 @@ pub struct Keyboard {
     /// Right part mirrored left.
     /// `_` means a skipped and blocked key.
     pub keys: Keys,
-    pub score: f64,
+    pub score: (f64, u16, u16),
 
     pub mutations: Vec<Mutation>,
     pub parent_version: String,
@@ -35,7 +35,7 @@ impl Keyboard {
     pub fn new(
         version: String,
         keys: Keys,
-        score: f64,
+        score: (f64, u16, u16),
         mutations: Vec<Mutation>,
         parent_version: String,
         parent: Keys,
@@ -88,12 +88,12 @@ impl IIndividual<Mutation> for Keyboard {
     fn to_string(&self) -> String {
         fn fill_missed_positions(iter: Iter<(char, u8)>) -> String {
             let inverted: HashMap<_, _> = iter.map(|(c, p)| (p % 5_u8, *c)).collect();
-            (0_u8..4_u8)
+            (0_u8..=4_u8)
                 .map(|i| match inverted.get(&i) {
                     Some(&c) => c,
                     _ => '_',
                 })
-                .join(" ")
+                .join("")
         }
 
         let sorted = self
@@ -125,7 +125,16 @@ impl IIndividual<Mutation> for Keyboard {
             })
             .join(" ");
 
-        format!("{}  {}; {:.3};", left, right, self.score)
+        let (effort, left_counter, right_counter) = self.score;
+        format!(
+            "{}  {}; {}; {}; {:.3}; {:.3};",
+            left,
+            right,
+            left_counter,
+            right_counter,
+            left_counter as f64 / right_counter as f64,
+            effort
+        )
     }
 }
 
@@ -154,7 +163,7 @@ pub mod tests {
                 .cloned()
                 .collect(),
             parent_version: "parent_version".to_string(),
-            score: 1.,
+            score: (1., 1, 2),
             version: "version".to_string(),
         };
 
@@ -170,7 +179,7 @@ pub mod tests {
             .to_vec(),
             parent: [('a', 0_u8)].iter().cloned().collect(),
             parent_version: "parent_version2".to_string(),
-            score: 2.,
+            score: (2., 3, 4),
             version: "version2".to_string(),
         };
 

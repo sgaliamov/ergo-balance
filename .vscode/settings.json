@@ -1,12 +1,17 @@
 {
   "cSpell.words": [
+    "asler",
     "chrono",
     "deque",
+    "hntio",
     "indicatif",
     "itertools",
+    "qubpg",
     "structopt",
     "threadpool",
-    "zxcv"
+    "wyfj",
+    "zxcv",
+    "zxcvd"
   ],
   "cSpell.ignorePaths": ["**/.cargo/**", "data/**"],
   "rust-analyzer.diagnostics.disabled": ["macro-error"]

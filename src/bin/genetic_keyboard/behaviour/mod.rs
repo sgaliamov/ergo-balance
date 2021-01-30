@@ -27,7 +27,8 @@ impl IBehaviour<Mutation, Keyboard> for Behaviour {
     }
 
     fn get_score(&self, individual: &Keyboard) -> f64 {
-        score_calculator::get_score(&self, &individual.keys)
+        let (effort, _, _) = score_calculator::get_score(&self, &individual.keys);
+        effort
     }
 
     fn cross(&self, individual: &Keyboard, partner: &Keyboard) -> Box<Keyboard> {
@@ -200,7 +201,7 @@ pub mod tests {
             mutations: Vec::new(),
             parent: HashMap::new(),
             parent_version: "parent_version".to_string(),
-            score: 0.,
+            score: (0., 0, 0),
             version: "version".to_string(),
         };
 
