@@ -6,6 +6,7 @@
     "hntio",
     "indicatif",
     "itertools",
+    "powf",
     "powi",
     "qubpg",
     "structopt",
