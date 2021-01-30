@@ -8,15 +8,6 @@
     "threadpool",
     "zxcv"
   ],
-  "cSpell.ignorePaths": [
-    "**/package-lock.json",
-    "**/node_modules/**",
-    "**/vscode-extension/**",
-    "**/.git/objects/**",
-    ".vscode",
-    ".vscode-insiders",
-    ".rustup",
-    "data/**"
-  ],
+  "cSpell.ignorePaths": ["**/.cargo/**", "data/**"],
   "rust-analyzer.diagnostics.disabled": ["macro-error"]
 }
