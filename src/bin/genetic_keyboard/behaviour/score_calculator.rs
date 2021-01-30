@@ -1,8 +1,9 @@
 use super::{Behaviour, Position};
-use crate::keyboard::Keys;
+use crate::keyboard::{get_factor, Keys};
 use itertools::Itertools;
 use std::collections::HashMap;
 
+/// lower score better because it shows less efforts and better ballance.
 pub fn get_score(this: &Behaviour, keyboard: &Keys) -> (f64, u16, u16) {
     let (effort, left, right) = this
         .words
@@ -19,7 +20,9 @@ pub fn get_score(this: &Behaviour, keyboard: &Keys) -> (f64, u16, u16) {
             },
         );
 
-    // todo: use factor
+    let factor = get_factor(left, right);
+    let effort = effort * factor;
+
     (effort, left, right)
 }
 
@@ -75,13 +78,3 @@ fn get_word_score(
         right + !is_left(key) as u16,
     )
 }
-
-// fn get_factor(left_score: f64, right_score: f64) -> f64 {
-//     let factor = if left_score.partial_cmp(&right_score).unwrap() == Ordering::Less {
-//         left_score / right_score
-//     } else {
-//         right_score / left_score
-//     };
-
-//     1.1 - 0.1 / factor
-// }

@@ -1,7 +1,7 @@
 use crate::behaviour::Position;
 use ed_balance::{IIndividual, IMutation};
 use itertools::Itertools;
-use std::{collections::HashMap, hash::Hash, slice::Iter};
+use std::{cmp::Ordering, collections::HashMap, hash::Hash, slice::Iter};
 
 #[derive(Debug, Hash, Eq, PartialEq, PartialOrd, Clone, Copy)]
 pub struct Mutation {
@@ -136,7 +136,7 @@ impl IIndividual<Mutation> for Keyboard {
             right,
             left_counter,
             right_counter,
-            left_counter as f64 / right_counter as f64,
+            get_factor(left_counter, right_counter),
             effort
         )
     }
@@ -144,6 +144,19 @@ impl IIndividual<Mutation> for Keyboard {
 
 fn box_keyboard(keyboard: Keyboard) -> Box<Keyboard> {
     Box::new(keyboard)
+}
+
+/// better the ballance lower the factor.\
+/// the ideal factor is 1 for the ideal balance (50x50).\
+/// 1 means that the factor does not affect a score.
+pub fn get_factor(left_score: u16, right_score: u16) -> f64 {
+    let factor = if left_score.cmp(&right_score) == Ordering::Greater {
+        left_score as f64 / right_score as f64
+    } else {
+        right_score as f64 / left_score as f64
+    };
+
+    factor
 }
 
 #[cfg(test)]
