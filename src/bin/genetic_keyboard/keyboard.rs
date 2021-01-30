@@ -131,11 +131,12 @@ impl IIndividual<Mutation> for Keyboard {
 
         let (effort, left_counter, right_counter) = self.score;
         format!(
-            "{}  {}; {}; {}; {:.3}; {:.3};",
+            "{}  {}; {}; {}; {:.3}; {:.3}; {:.3};",
             left,
             right,
             left_counter,
             right_counter,
+            get_balance(left_counter, right_counter),
             get_factor(left_counter, right_counter),
             effort
         )
@@ -150,13 +151,19 @@ fn box_keyboard(keyboard: Keyboard) -> Box<Keyboard> {
 /// the ideal factor is 1 for the ideal balance (50x50).\
 /// 1 means that the factor does not affect a score.
 pub fn get_factor(left_score: u16, right_score: u16) -> f64 {
-    let factor = if left_score.cmp(&right_score) == Ordering::Greater {
-        left_score as f64 / right_score as f64
-    } else {
-        right_score as f64 / left_score as f64
-    };
+    let ballance = get_balance(left_score, right_score);
 
-    3. - (2. / ((factor - 1.).powi(3) + 1.))
+    // https://www.desmos.com/calculator
+    // bigger power - less strict ballance
+    3. - (2. / ((ballance - 1.).powi(3) + 1.))
+}
+
+fn get_balance(left_score: u16, right_score: u16) -> f64 {
+    if left_score.cmp(&right_score) == Ordering::Greater {
+        return left_score as f64 / right_score as f64;
+    }
+
+    right_score as f64 / left_score as f64
 }
 
 #[cfg(test)]

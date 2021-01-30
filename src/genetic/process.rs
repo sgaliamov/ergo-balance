@@ -1,7 +1,6 @@
 use crate::{CliSettings, DynError, GeneticAlgorithm, IBehaviour, IIndividual, IMutation};
 use chrono::prelude::*;
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
-use itertools::Itertools;
 use std::{sync::Arc, thread};
 
 pub fn run<TMutation, TIndividual, TBehaviour>(settings: CliSettings) -> Result<(), DynError>
