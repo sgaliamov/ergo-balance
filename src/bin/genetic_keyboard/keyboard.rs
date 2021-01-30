@@ -1,7 +1,7 @@
 use crate::behaviour::Position;
 use ed_balance::{IIndividual, IMutation};
 use itertools::Itertools;
-use std::{collections::HashMap, hash::Hash};
+use std::{collections::HashMap, hash::Hash, slice::Iter};
 
 #[derive(Debug, Hash, Eq, PartialEq, PartialOrd, Clone, Copy)]
 pub struct Mutation {
@@ -86,6 +86,16 @@ impl IIndividual<Mutation> for Keyboard {
     }
 
     fn to_string(&self) -> String {
+        fn fill_missed_positions(iter: Iter<(char, u8)>) -> String {
+            let inverted: HashMap<_, _> = iter.map(|(c, p)| (p % 5_u8, *c)).collect();
+            (0_u8..4_u8)
+                .map(|i| match inverted.get(&i) {
+                    Some(&c) => c,
+                    _ => '_',
+                })
+                .join(" ")
+        }
+
         let sorted = self
             .keys
             .iter()
@@ -97,7 +107,7 @@ impl IIndividual<Mutation> for Keyboard {
             .take(15)
             .group_by(|(_, &p)| p / 5)
             .into_iter()
-            .map(|(_, x)| x.map(|(c, _)| c).join(""))
+            .map(|(_, x)| fill_missed_positions(x.map(|(&a, &b)| (a, b)).collect_vec().iter()))
             .join(" ");
 
         let right = sorted
@@ -106,9 +116,12 @@ impl IIndividual<Mutation> for Keyboard {
             .group_by(|(_, &p)| p / 5)
             .into_iter()
             .map(|(_, x)| {
-                x.sorted_by(|(_, &i1), (_, &i2)| i2.cmp(&i1))
-                    .map(|(c, _)| c)
-                    .join("")
+                let sorted = x
+                    .sorted_by(|(_, &i1), (_, &i2)| i2.cmp(&i1))
+                    .map(|(&a, &b)| (a, b))
+                    .collect_vec();
+
+                fill_missed_positions(sorted.iter())
             })
             .join(" ");
 
