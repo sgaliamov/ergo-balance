@@ -156,7 +156,7 @@ pub fn get_factor(left_score: u16, right_score: u16) -> f64 {
         right_score as f64 / left_score as f64
     };
 
-    factor
+    3. - (2. / ((factor - 1.).powi(3) + 1.))
 }
 
 #[cfg(test)]
