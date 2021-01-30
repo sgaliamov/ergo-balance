@@ -86,9 +86,11 @@ impl IIndividual<Mutation> for Keyboard {
     }
 
     fn to_string(&self) -> String {
-        fn fill_missed_positions(iter: Iter<(char, u8)>) -> String {
+        fn fill_missed_positions(iter: Iter<(char, u8)>, revert: bool) -> String {
             let inverted: HashMap<_, _> = iter.map(|(c, p)| (p % 5_u8, *c)).collect();
+
             (0_u8..=4_u8)
+                .map(|i| if revert { 4 - i } else { i })
                 .map(|i| match inverted.get(&i) {
                     Some(&c) => c,
                     _ => '_',
@@ -107,7 +109,9 @@ impl IIndividual<Mutation> for Keyboard {
             .take(15)
             .group_by(|(_, &p)| p / 5)
             .into_iter()
-            .map(|(_, x)| fill_missed_positions(x.map(|(&a, &b)| (a, b)).collect_vec().iter()))
+            .map(|(_, x)| {
+                fill_missed_positions(x.map(|(&a, &b)| (a, b)).collect_vec().iter(), false)
+            })
             .join(" ");
 
         let right = sorted
@@ -121,7 +125,7 @@ impl IIndividual<Mutation> for Keyboard {
                     .map(|(&a, &b)| (a, b))
                     .collect_vec();
 
-                fill_missed_positions(sorted.iter())
+                fill_missed_positions(sorted.iter(), true)
             })
             .join(" ");
 
