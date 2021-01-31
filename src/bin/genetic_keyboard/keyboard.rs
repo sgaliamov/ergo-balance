@@ -131,7 +131,7 @@ impl IIndividual<Mutation> for Keyboard {
 
         let (effort, left_counter, right_counter) = self.score;
         format!(
-            "{}  {}; {}; {}; {:.3}; {:.3}; {:.3};",
+            "{}  {}; {}; {}; {:.3}; {:.3}; {:.5};",
             left,
             right,
             left_counter,
