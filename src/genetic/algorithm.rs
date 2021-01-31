@@ -40,7 +40,13 @@ where
             })
             .collect::<Vec<_>>();
 
+        let mut new_random: Vec<_> = (0..context.population_size / 10)
+            .into_par_iter()
+            .map(|_| self.behaviour.generate())
+            .collect();
+
         mutants.append(population);
+        mutants.append(&mut new_random);
 
         let offspring: Vec<_> = mutants
             .into_iter()
