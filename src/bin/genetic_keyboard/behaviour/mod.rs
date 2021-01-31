@@ -44,8 +44,8 @@ impl IBehaviour<Mutation, Keyboard> for Behaviour {
     }
 
     fn score_cmp(&self, a: &Keyboard, b: &Keyboard) -> Ordering {
-        let a_total = self.get_score(a);
-        let b_total = self.get_score(b);
+        let (a_total, _, _) = a.score;
+        let (b_total, _, _) = b.score;
 
         a_total.partial_cmp(&b_total).unwrap()
     }
