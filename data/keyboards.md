@@ -2,7 +2,24 @@
 
 ``` csv
 
-kpdmj asreu zxcvq  wyth_ folni bg___; 918; 871; 1.054; 1.003; 4620.434; based on 0.1-29
+kpdmj asreu zxcvq  wyth_ folni bg___; based on 0.1-29
+jbdmk asreu zxcvq  whty_ folin pg___; based on 0.1-29
+kmpuq asred zxcvj  wyth_ folni bg___; based on 0.1-29
+jpdmk asreu zxcvq  byth_ filno wg___; based on 0.1-29
+jpdmq asreu zxcvk  byth_ filon wg___; based on 0.1-29
+
+jbduq asrem zxcvk  wyth_ polni fg___; 896; 893; 1.003; 1.000; 4609.033;
+kbduq asrem zxcvj  wyth_ polni fg___; 896; 893; 1.003; 1.000; 4609.533;
+jbduq asrem zxcvk  whty_ folni pg___; 896; 893; 1.003; 1.000; 4610.033;
+jbduq asrem zxcvk  whty_ polni fg___; 896; 893; 1.003; 1.000; 4610.033;
+
+jpdmk asreu zxcvq  byth_ filno wg___; 918; 871; 1.054; 1.003; 4627.457;
+jpdmq asreu zxcvk  byth_ filon wg___; 918; 871; 1.054; 1.003; 4629.463;
+jmdpq asreu zxcvk  byth_ filno wg___; 918; 871; 1.054; 1.003; 4629.463;
+
+kpdmj asreu zxcvq  wyth_ folni bg___; 918; 871; 1.054; 1.003; 4620.434;
+jbdmk asreu zxcvq  whty_ folin pg___; 896; 893; 1.003; 1.000; 4622.033;
+kmpuq asred zxcvj  wyth_ folni bg___; 918; 871; 1.054; 1.003; 4622.190;
 
 ```
 
