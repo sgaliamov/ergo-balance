@@ -9,5 +9,5 @@ clear
     -c 5 \
     -g 10000 \
     -m 4 \
-    --results-count 20 \
+    --results-count 30 \
     --repeats-count 100

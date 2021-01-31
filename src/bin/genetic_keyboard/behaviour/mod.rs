@@ -47,7 +47,17 @@ impl IBehaviour<Mutation, Keyboard> for Behaviour {
         let (a_total, _, _) = a.score;
         let (b_total, _, _) = b.score;
 
-        a_total.partial_cmp(&b_total).unwrap()
+        fn get_sorted_position(keys: &Keys) -> Vec<&Position> {
+            keys.iter()
+                .sorted_by(|(c1, _), (c2, _)| c1.cmp(c2))
+                .map(|(_, p)| p)
+                .collect_vec()
+        }
+
+        a_total
+            .partial_cmp(&b_total)
+            .unwrap()
+            .then_with(|| get_sorted_position(&a.keys).cmp(&get_sorted_position(&b.keys)))
     }
 
     fn load(&self) -> std::io::Result<Vec<Box<Keyboard>>> {
