@@ -8,6 +8,10 @@ pub struct CliSettings {
     #[structopt(short = "k", long = "keyboard")]
     pub keyboard: Option<PathBuf>,
 
+    /// sample text
+    #[structopt(short = "t", long = "text")]
+    pub text: Option<PathBuf>,
+
     #[structopt(short = "d", long = "digraphs")]
     pub digraphs: Option<PathBuf>,
 

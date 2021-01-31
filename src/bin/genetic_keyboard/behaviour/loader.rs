@@ -11,7 +11,7 @@ pub fn create(settings: &CliSettings) -> Option<Behaviour> {
     let context = Context::new(settings);
     let path = settings.keyboard.clone()?;
     let json = load_json(&path)?;
-    let words = load_words(&json)?;
+    let words = load_words(&settings.text.clone()?)?;
     let frozen_keys = load_frozen(&json)?;
     let efforts = load_efforts(&json)?;
     let switch_penalty = json["switchPenalty"].as_f64()?;
@@ -33,9 +33,8 @@ pub fn create(settings: &CliSettings) -> Option<Behaviour> {
     })
 }
 
-fn load_words(json: &Value) -> Option<Vec<String>> {
-    let sample_path = json["samplePath"].as_str()?;
-    let text = std::fs::read_to_string(sample_path).ok()?;
+fn load_words(path: &PathBuf) -> Option<Vec<String>> {
+    let text = std::fs::read_to_string(path).ok()?;
     let words = text.split(' ').map_into().collect_vec();
     Some(words)
 }

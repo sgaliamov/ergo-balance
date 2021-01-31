@@ -19,7 +19,7 @@ use crate::keyboard::{Keyboard, Keys, Mutation};
 
 impl IBehaviour<Mutation, Keyboard> for Behaviour {
     fn new(settings: &CliSettings) -> Self {
-        loader::create(settings).unwrap()
+        loader::create(settings).expect("Failed to create the behaviour object.")
     }
 
     fn generate(&self) -> Box<Keyboard> {
