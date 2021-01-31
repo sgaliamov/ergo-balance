@@ -47,7 +47,7 @@ qwdrt asefg zxcvb  jykl_ huiop nm___; c-qwerty-2
 qwerf asdtg zxcvb  jylk_ huoip nm___; qwerf
 qwert asdfg zxcvb  yuio_ hjklp nm___; qwerty
 qwfpg asnrt zxcvb  jluy_ hdeio km___; gelatin
-qwfpk arsth zxcvb  jluy_ dneio gm___; collemak
+qwfpk asrth zxcvb  jluy_ dneio gm___; collemak
 qwldg asnrt zxcvb  juop_ kmehi yf___; kaehi
 qwldp asrtg zxcvj  kmuy_ fneio bh___; soul
 qwudp asetg zxcvb  jfyl_ hniro km___; niro
