@@ -6,7 +6,9 @@ It has an implementation of a genetic algorithm that looks for an "optimal" bala
 
 Don't ask why...
 
-## To do
+## Plan
 
-1. Save and load results.
-1. Make keys more balanced.
+1. Find stable layouts on 29.
+1. Use them on 123 and find next stable.
+1. Use results on big text.
+1. Do same with all unblock keys.

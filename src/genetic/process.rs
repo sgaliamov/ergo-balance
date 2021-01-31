@@ -20,7 +20,7 @@ where
     let pb_main = progress.add(pb_main);
 
     let spinner_style = ProgressStyle::default_spinner().template("{wide_msg}");
-    let pb_letters: Vec<ProgressBar> = (0..settings.results_count)
+    let progress_bars: Vec<ProgressBar> = (0..settings.results_count)
         .map(|_| {
             let pb = ProgressBar::new_spinner();
             pb.set_style(spinner_style.clone());
@@ -34,14 +34,16 @@ where
         let context = behaviour.get_context();
         let algorithm = GeneticAlgorithm::new(&behaviour);
 
-        let mut population = (0..context.population_size)
+        let mut population: Vec<_> = (0..context.population_size)
             .into_iter()
             .map(|_| behaviour.generate())
             .collect();
+        population.extend(behaviour.load().unwrap());
 
         let mut prev: DateTime<Utc> = Utc::now();
         let mut prev_result = Vec::<Box<TIndividual>>::new();
         let mut repeats_counter = 0;
+
         for index in 0..context.generations_count {
             population = algorithm.run(&mut population).expect("All died!");
 
@@ -49,7 +51,7 @@ where
                 index,
                 prev,
                 &pb_main,
-                &pb_letters,
+                &progress_bars,
                 &population,
                 context.generations_count,
             ) {
@@ -65,15 +67,17 @@ where
             ) {
                 prev_result = top_results;
                 repeats_counter = repeats;
-                pb_main.set_message(&format!("[repeats: {}]", repeats_counter));
+                pb_main.set_message(&format!("(repeats: {})", repeats_counter));
             } else {
-                pb_main.set_message(&format!("[repeats: {}]", repeats_counter + 1));
+                pb_main.set_message(&format!("(repeats: {})", repeats_counter + 1));
                 break;
             }
+
+            TBehaviour::save(&prev_result).unwrap();
         }
 
         pb_main.finish();
-        pb_letters.iter().for_each(|x| x.finish());
+        progress_bars.iter().for_each(|x| x.finish());
     });
 
     progress.join().unwrap();
@@ -115,7 +119,7 @@ fn render_progress<TMutation, TIndividual>(
     index: u16,
     prev: DateTime<Utc>,
     pb_main: &ProgressBar,
-    pb_letters: &Vec<ProgressBar>,
+    progress_bars: &Vec<ProgressBar>,
     population: &Vec<Box<TIndividual>>,
     generations_count: u16,
 ) -> Option<DateTime<Utc>>
@@ -126,9 +130,9 @@ where
     let passed = Utc::now() - prev;
 
     if passed.num_seconds() >= 5 || index == 0 || index == generations_count - 1 {
-        for (i, item) in population.iter().take(pb_letters.len()).enumerate() {
+        for (i, item) in population.iter().take(progress_bars.len()).enumerate() {
             let text = item.to_string();
-            pb_letters[i].set_message(&text);
+            progress_bars[i].set_message(&text);
         }
 
         pb_main.set_position(index as u64);

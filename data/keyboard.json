@@ -9,7 +9,7 @@
     "v": "13"
   },
   "blocked": [15, 25, 26, 27],
-  "switchPenalty": 3,
+  "switchPenalty": 5,
   "sameKeyPenalty": 1.5,
   "maxEffort": 3,
   "efforts": {

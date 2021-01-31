@@ -20,7 +20,7 @@ pub struct CliSettings {
     #[structopt(short = "m", long = "mutations-count", default_value = "2")]
     pub mutations_count: u8,
 
-    #[structopt(short = "p", long = "population-size", default_value = "10")]
+    #[structopt(short = "p", long = "population-size", default_value = "100")]
     pub population_size: u16,
 
     #[structopt(short = "c", long = "children-count", default_value = "10")]
@@ -30,7 +30,7 @@ pub struct CliSettings {
     #[structopt(short = "g", long = "generations-count", default_value = "1000")]
     pub generations_count: u16,
 
-    /// how much we return in at the end
+    /// how much we render in at the end
     #[structopt(short = "r", long = "results-count", default_value = "20")]
     pub results_count: u8,
 
