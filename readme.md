@@ -8,7 +8,5 @@ Don't ask why...
 
 ## Plan
 
-1. Find stable layouts on 29.
-1. Use them on 123 and find next stable.
 1. Use results on big text.
 1. Do same with all unblock keys.

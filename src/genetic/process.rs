@@ -153,7 +153,7 @@ where
 {
     let passed = Utc::now() - prev;
 
-    if passed.num_seconds() >= 1 || index == 0 || index == generations_count - 1 {
+    if passed.num_seconds() >= 5 || index == 0 || index == generations_count - 1 {
         pb_main.set_message(&format!("(repeats: {})", repeats_counter));
 
         for (i, item) in results.iter().enumerate() {

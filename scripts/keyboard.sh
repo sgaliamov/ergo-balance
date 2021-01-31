@@ -8,6 +8,6 @@ clear
     -p 500 \
     -c 5 \
     -g 10000 \
-    -m 4 \
+    -m 5 \
     --results-count 30 \
-    --repeats-count 100
+    --repeats-count 150
