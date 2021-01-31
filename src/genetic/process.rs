@@ -39,24 +39,15 @@ where
             .map(|_| behaviour.generate())
             .collect();
         population.extend(behaviour.load().unwrap());
+        // to be able just calculate scores
+        if context.generations_count == 0 {
+            TBehaviour::save(&population).unwrap();
+            return;
+        }
 
         let mut prev: DateTime<Utc> = Utc::now();
         let mut prev_result = Vec::<Box<TIndividual>>::new();
         let mut repeats_counter = 0;
-
-        // to be able just calculate scores
-        if context.generations_count == 0 {
-            if let Some(date) = render_progress(
-                0,
-                prev,
-                &pb_main,
-                &progress_bars,
-                &population,
-                context.generations_count,
-            ) {
-                prev = date
-            }
-        }
 
         for index in 0..context.generations_count {
             population = algorithm.run(&mut population).expect("All died!");
