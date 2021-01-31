@@ -4,11 +4,11 @@ use itertools::Itertools;
 use std::collections::HashMap;
 
 /// lower score better because it shows less efforts and better ballance.
-pub fn get_score(this: &Behaviour, keyboard: &Keys) -> (f64, u16, u16) {
+pub fn calculate_score(this: &Behaviour, keyboard: &Keys) -> (f64, u16, u16) {
     let (effort, left, right) = this
         .words
         .iter()
-        .map(|x| get_word_score(this, keyboard, x))
+        .map(|x| calculate_word_score(this, keyboard, x))
         .fold(
             (0., 0, 0),
             |(effort_total, left_total, right_total), (effort, left, right)| {
@@ -26,7 +26,7 @@ pub fn get_score(this: &Behaviour, keyboard: &Keys) -> (f64, u16, u16) {
     (effort, left, right)
 }
 
-fn get_word_score(
+fn calculate_word_score(
     behaviour: &Behaviour,
     keyboard: &HashMap<char, Position>,
     word: &str,

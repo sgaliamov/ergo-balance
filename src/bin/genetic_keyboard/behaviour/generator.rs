@@ -1,4 +1,4 @@
-use super::{score_calculator::get_score, Behaviour, FrozenKeys, Keyboard, Position};
+use super::{score_calculator::calculate_score, Behaviour, FrozenKeys, Keyboard, Position};
 use crate::keyboard::Keys;
 use ed_balance::get_version;
 use itertools::Itertools;
@@ -14,7 +14,7 @@ pub fn generate(this: &Behaviour) -> Box<Keyboard> {
     Keyboard::new(
         version.clone(),
         keys.clone(),
-        get_score(this, &keys),
+        calculate_score(this, &keys),
         Vec::new(),
         version, // versions match to be able cross children with parents
         keys,

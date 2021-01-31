@@ -21,7 +21,7 @@ pub trait IBehaviour<TMutation: IMutation, TIndividual: IIndividual<TMutation>>:
 
     fn generate(&self) -> Box<TIndividual>;
 
-    fn get_score(&self, individual: &TIndividual) -> f64;
+    fn calculate_score(&self, individual: &TIndividual) -> f64;
 
     fn cross(&self, individual: &TIndividual, partner: &TIndividual) -> Box<TIndividual>;
 
@@ -30,8 +30,8 @@ pub trait IBehaviour<TMutation: IMutation, TIndividual: IIndividual<TMutation>>:
     fn get_context<'a>(&'a self) -> &'a Context;
 
     fn score_cmp(&self, a: &TIndividual, b: &TIndividual) -> Ordering {
-        let a_total = self.get_score(a);
-        let b_total = self.get_score(b);
+        let a_total = self.calculate_score(a);
+        let b_total = self.calculate_score(b);
 
         b_total.partial_cmp(&a_total).unwrap()
     }
@@ -49,6 +49,10 @@ pub struct Context {
 
 impl Context {
     pub fn new(settings: &CliSettings) -> Self {
+        if settings.mutations_count <=0 {
+            panic!("Invalid mutations count.")
+        }
+
         Context {
             mutations_count: settings.mutations_count as usize,
             population_size: settings.population_size as usize,

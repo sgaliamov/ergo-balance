@@ -1,4 +1,4 @@
-use super::{score_calculator::get_score, Behaviour};
+use super::{score_calculator::calculate_score, Behaviour};
 use crate::keyboard::{Keyboard, Keys, Mutation};
 use ed_balance::get_version;
 use itertools::Itertools;
@@ -30,7 +30,7 @@ pub fn mutate(this: &Behaviour, individual: &Keyboard) -> Box<Keyboard> {
     let version = get_version();
     let keys: Keys = keys.into_iter().merge(this.frozen_keys.clone()).collect();
     debug_assert_eq!(keys.len(), individual.keys.len());
-    let score = get_score(this, &keys);
+    let score = calculate_score(this, &keys);
 
     Keyboard::new(
         version,

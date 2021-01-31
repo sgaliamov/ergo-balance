@@ -88,7 +88,7 @@ pub fn format_result(
         right_score,
         get_factor(left_score, right_score),
         left_score + right_score,
-        get_score(left_score, right_score)
+        calculate_score(left_score, right_score)
     )
 }
 
@@ -102,7 +102,7 @@ fn get_factor(left_score: f64, right_score: f64) -> f64 {
     1.1 - 0.1 / factor
 }
 
-pub fn get_score(left: f64, right: f64) -> f64 {
+pub fn calculate_score(left: f64, right: f64) -> f64 {
     let factor = get_factor(left, right);
     let total = left + right;
 

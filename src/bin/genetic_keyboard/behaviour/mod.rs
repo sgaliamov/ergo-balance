@@ -26,8 +26,8 @@ impl IBehaviour<Mutation, Keyboard> for Behaviour {
         generator::generate(self)
     }
 
-    fn get_score(&self, individual: &Keyboard) -> f64 {
-        let (effort, _, _) = score_calculator::get_score(&self, &individual.keys);
+    fn calculate_score(&self, individual: &Keyboard) -> f64 {
+        let (effort, _, _) = score_calculator::calculate_score(&self, &individual.keys);
         effort
     }
 
@@ -58,7 +58,7 @@ impl IBehaviour<Mutation, Keyboard> for Behaviour {
                 .map(|x| {
                     let line = x.unwrap();
                     let keys = line_to_keys(&line);
-                    let score = score_calculator::get_score(&self, &keys);
+                    let score = score_calculator::calculate_score(&self, &keys);
                     let version = get_version();
 
                     Keyboard::new(
