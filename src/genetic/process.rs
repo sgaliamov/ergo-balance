@@ -44,6 +44,20 @@ where
         let mut prev_result = Vec::<Box<TIndividual>>::new();
         let mut repeats_counter = 0;
 
+        // to be able just calculate scores
+        if context.generations_count == 0 {
+            if let Some(date) = render_progress(
+                0,
+                prev,
+                &pb_main,
+                &progress_bars,
+                &population,
+                context.generations_count,
+            ) {
+                prev = date
+            }
+        }
+
         for index in 0..context.generations_count {
             population = algorithm.run(&mut population).expect("All died!");
 
@@ -80,7 +94,7 @@ where
         progress_bars.iter().for_each(|x| x.finish());
     });
 
-    progress.join().unwrap();
+    progress.join()?;
 
     Ok(())
 }
