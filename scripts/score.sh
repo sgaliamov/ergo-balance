@@ -8,6 +8,6 @@ clear
     -p 0 \
     -c 0 \
     -g 0 \
-    -m 0 \
+    -m 1 \
     --results-count 100 \
     --repeats-count 0
