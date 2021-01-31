@@ -2,7 +2,7 @@ use super::{score_calculator::get_score, Behaviour};
 use crate::keyboard::{Keyboard, Keys, Mutation};
 use ed_balance::get_version;
 use itertools::Itertools;
-use rand::{prelude::SliceRandom, thread_rng};
+use rand::{prelude::SliceRandom, thread_rng, RngCore};
 
 pub fn mutate(this: &Behaviour, individual: &Keyboard) -> Box<Keyboard> {
     let mut rng = thread_rng();
@@ -15,8 +15,9 @@ pub fn mutate(this: &Behaviour, individual: &Keyboard) -> Box<Keyboard> {
         .collect_vec();
 
     keys.shuffle(&mut rng);
+    let mutations_count = 1 + (rng.next_u32() % this.context.mutations_count as u32) as usize;
 
-    for index in 0..this.context.mutations_count {
+    for index in 0..mutations_count {
         let second_index = keys.len() - index - 1;
         let (first_char, first) = keys[index];
         let (second_char, second) = keys[second_index];

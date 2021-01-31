@@ -39,6 +39,7 @@ where
             .map(|_| behaviour.generate())
             .collect();
         population.extend(behaviour.load().unwrap());
+
         // to be able just calculate scores
         if context.generations_count == 0 {
             TBehaviour::save(&population).unwrap();
