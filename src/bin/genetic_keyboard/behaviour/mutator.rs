@@ -15,7 +15,7 @@ pub fn mutate(this: &Behaviour, individual: &Keyboard) -> Box<Keyboard> {
         .collect_vec();
 
     keys.shuffle(&mut rng);
-    let mutations_count = 1 + (rng.next_u32() % this.context.mutations_count as u32) as usize;
+    let mutations_count = 1 + (rng.next_u32() as usize % this.context.mutations_count);
 
     for index in 0..mutations_count {
         let second_index = keys.len() - index - 1;

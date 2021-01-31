@@ -1,5 +1,6 @@
 use crate::{IBehaviour, IIndividual, IMutation};
 use itertools::Itertools;
+use rand::{RngCore, thread_rng};
 use rayon::prelude::*;
 use std::marker::PhantomData;
 
@@ -31,10 +32,12 @@ where
 
     pub fn run(&self, population: &mut Vec<Box<TIndividual>>) -> Result<Vec<Box<TIndividual>>, ()> {
         let context = self.behaviour.get_context();
+        let mut rng = thread_rng();
+        let max_children_count = 1 + (rng.next_u32() as u16 % context.children_count);
         let mut mutants: Vec<_> = population
             .into_par_iter()
             .flat_map(|parent| {
-                (0..context.children_count)
+                (0..max_children_count)
                     .map(|_| self.behaviour.mutate(parent))
                     .collect::<Vec<_>>()
             })
