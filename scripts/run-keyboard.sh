@@ -4,7 +4,7 @@ clear
 
 ./target/publish/genetic_keyboard.exe \
     -k ./data/keyboard.dev.json \
-    -p 100 \
+    -p 200 \
     -c 5 \
     -g 10000 \
     -m 4 \
