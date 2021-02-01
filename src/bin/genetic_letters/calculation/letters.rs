@@ -32,6 +32,10 @@ impl IIndividual<Mutation> for Letters {
     fn to_string(&self) -> String {
         format_result(&self.left, &self.right, self.left_score, self.right_score)
     }
+
+    fn get_score(&self) -> f64 {
+        self.left_score + self.right_score
+    }
 }
 
 impl Letters {

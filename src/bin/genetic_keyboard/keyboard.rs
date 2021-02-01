@@ -141,6 +141,10 @@ impl IIndividual<Mutation> for Keyboard {
             effort
         )
     }
+
+    fn get_score(&self) -> f64 {
+        self.score.0
+    }
 }
 
 fn box_keyboard(keyboard: Keyboard) -> Box<Keyboard> {

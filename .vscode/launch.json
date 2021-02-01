@@ -31,7 +31,7 @@
       "env": { "RUST_BACKTRACE": "1" },
       "args": [
         "-t",
-        "${workspaceRoot}/data/0.1-29.result.txt",
+        "${workspaceRoot}/data/samples/0.1-29.result.txt",
         "-k",
         "${workspaceRoot}/data/keyboard.json",
         "-p",

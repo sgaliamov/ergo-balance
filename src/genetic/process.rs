@@ -50,7 +50,7 @@ where
         let mut repeats_counter = 0;
 
         for index in 0..context.generations_count {
-            population = algorithm.run(&mut population).expect("All died!");
+            population = algorithm.run(&population, &context).expect("All died!");
 
             let (repeats, top_results, to_continue) = need_to_continue(
                 repeats_counter,

@@ -8,6 +8,8 @@ pub trait IIndividual<TMutation: IMutation>: Clone + Eq + Hash + Send + Sync {
 
     /// Text representation.
     fn to_string(&self) -> String;
+
+    fn get_score(&self) -> f64;
 }
 
 pub trait IMutation: Sync {}
@@ -49,7 +51,7 @@ pub struct Context {
 
 impl Context {
     pub fn new(settings: &CliSettings) -> Self {
-        if settings.mutations_count <=0 {
+        if settings.mutations_count <= 0 {
             panic!("Invalid mutations count.")
         }
 
