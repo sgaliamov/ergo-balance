@@ -47,34 +47,38 @@ fn calculate_word_score(
             let key_b = keyboard[b];
             let a_is_left = is_left(key_a);
             let b_is_left = is_left(key_b);
-            let same_part = !a_is_left && !b_is_left || a_is_left && b_is_left;
+            let both_left = a_is_left && b_is_left;
+            let both_right = !a_is_left && !b_is_left;
+            let same_part = both_left || both_right;
 
             if !same_part {
-                return (behaviour.switch_penalty, b_is_left);
+                let effort = behaviour.efforts[&key_b][&key_b];
+
+                return (
+                    behaviour.switch_penalty * effort,
+                    both_left as u16,
+                    both_right as u16,
+                );
             }
 
             let effort = behaviour.efforts[&key_a][&key_b];
 
             if key_a == key_b {
-                return (effort * behaviour.same_key_penalty, b_is_left);
+                return (
+                    effort * behaviour.same_key_penalty,
+                    both_left as u16,
+                    both_right as u16,
+                );
             }
 
-            (effort, b_is_left)
+            (effort, both_left as u16, both_right as u16)
         })
         .fold(
             (0., 0_u16, 0_u16),
-            |(total, left, right), (effort, is_left)| {
-                (
-                    effort + total,
-                    left + is_left as u16,
-                    right + !is_left as u16,
-                )
+            |(total, left, right), (effort, both_left, both_right)| {
+                (effort + total, left + both_left, right + both_right)
             },
         );
 
-    (
-        score + first,
-        left + is_left(key) as u16,
-        right + !is_left(key) as u16,
-    )
+    (score + first, left, right)
 }

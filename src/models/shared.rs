@@ -53,7 +53,7 @@ pub fn get_version() -> String {
     rand::thread_rng()
         .sample_iter(&Alphanumeric)
         .take(10)
-        .map(|x| x.to_string())
+        .map(|x| x as char)
         .collect()
 }
 
