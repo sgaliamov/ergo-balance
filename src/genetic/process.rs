@@ -74,9 +74,10 @@ where
                 prev,
                 &pb_main,
                 &progress_bars,
-                &prev_top_result,
+                &population,
                 context.generations_count,
                 repeats_counter,
+                context.results_count,
             ) {
                 prev = date;
             }
@@ -87,9 +88,10 @@ where
             prev,
             &pb_main,
             &progress_bars,
-            &prev_top_result,
+            &population,
             context.generations_count,
             repeats_counter,
+            context.results_count,
         );
         pb_main.finish();
         progress_bars.iter().for_each(|x| x.finish());
@@ -142,9 +144,10 @@ fn render_progress<TMutation, TIndividual, TBehaviour>(
     prev: DateTime<Utc>,
     pb_main: &ProgressBar,
     progress_bars: &Vec<ProgressBar>,
-    results: &Vec<Box<TIndividual>>,
+    population: &Vec<Box<TIndividual>>,
     generations_count: u16,
     repeats_counter: u16,
+    results_count: usize,
 ) -> Option<DateTime<Utc>>
 where
     TIndividual: IIndividual<TMutation>,
@@ -156,13 +159,13 @@ where
     if passed.num_seconds() >= 5 || index == 0 || index == generations_count - 1 {
         pb_main.set_message(&format!("(repeats: {})", repeats_counter));
 
-        for (i, item) in results.iter().enumerate() {
+        for (i, item) in population.iter().take(results_count).enumerate() {
             let text = item.to_string();
             progress_bars[i].set_message(&text);
         }
 
         pb_main.set_position(index as u64);
-        TBehaviour::save(&results).unwrap();
+        TBehaviour::save(&population).unwrap();
 
         return Some(Utc::now());
     }
