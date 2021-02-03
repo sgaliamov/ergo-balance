@@ -8,5 +8,4 @@ Don't ask why...
 
 ## Plan
 
-1. Use results on big text.
 1. Do same with all unblock keys.

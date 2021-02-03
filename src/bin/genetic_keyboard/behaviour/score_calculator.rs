@@ -38,7 +38,7 @@ fn calculate_word_score(
 
     let chars = word.chars().collect_vec();
     let key = keyboard[&chars[0]];
-    let first = behaviour.efforts[&key][&key];
+    let first = behaviour.efforts[&key][&key]; // to count the score for the first or one letter
     let (score, left, right) = chars
         .iter()
         .tuple_windows()
@@ -52,6 +52,9 @@ fn calculate_word_score(
             let same_part = both_left || both_right;
 
             if !same_part {
+                // key "a" is counted in a previous iteration,
+                // so whe we have the hand switch we need to count effort on the second letters,
+                // because the next hand "start" typing.
                 let effort = behaviour.efforts[&key_b][&key_b];
 
                 return (
