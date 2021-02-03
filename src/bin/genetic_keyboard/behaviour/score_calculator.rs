@@ -11,11 +11,11 @@ pub fn calculate_score(this: &Behaviour, keyboard: &Keys) -> (f64, u16, u16) {
         .map(|x| calculate_word_score(this, keyboard, x))
         .fold(
             (0., 0, 0),
-            |(effort_total, left_total, right_total), (effort, left, right)| {
+            |(effort_total, left_total, right_total), (word_effort, word_left, word_right)| {
                 (
-                    effort_total + effort,
-                    left + left_total,
-                    right + right_total,
+                    effort_total + word_effort,
+                    left_total + word_left,
+                    right_total + word_right,
                 )
             },
         );
@@ -79,7 +79,12 @@ fn calculate_word_score(
         .fold(
             (0., 0_u16, 0_u16),
             |(total, left, right), (effort, both_left, both_right)| {
-                (effort + total, left + both_left, right + both_right)
+                (
+                    // we get extra bonus if we use one hand continuously for longer
+                    effort + total - both_left as f64 - both_right as f64,
+                    left + both_left,
+                    right + both_right,
+                )
             },
         );
 
