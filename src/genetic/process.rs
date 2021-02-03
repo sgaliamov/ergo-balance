@@ -1,4 +1,4 @@
-use crate::{CliSettings, DynError, GeneticAlgorithm, IBehaviour, IIndividual, IMutation};
+use crate::{CliSettings, Context, DynError, GeneticAlgorithm, IBehaviour, IIndividual, IMutation};
 use chrono::prelude::*;
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use itertools::Itertools;
@@ -75,9 +75,8 @@ where
                 &pb_main,
                 &progress_bars,
                 &population,
-                context.generations_count,
+                context,
                 repeats_counter,
-                context.results_count,
             ) {
                 prev = date;
             }
@@ -89,9 +88,8 @@ where
             &pb_main,
             &progress_bars,
             &population,
-            context.generations_count,
+            context,
             repeats_counter,
-            context.results_count,
         );
         pb_main.finish();
         progress_bars.iter().for_each(|x| x.finish());
@@ -145,9 +143,8 @@ fn render_progress<TMutation, TIndividual, TBehaviour>(
     pb_main: &ProgressBar,
     progress_bars: &Vec<ProgressBar>,
     population: &Vec<Box<TIndividual>>,
-    generations_count: u16,
+    context: &Context,
     repeats_counter: u16,
-    results_count: usize,
 ) -> Option<DateTime<Utc>>
 where
     TIndividual: IIndividual<TMutation>,
@@ -156,16 +153,23 @@ where
 {
     let passed = Utc::now() - prev;
 
-    if passed.num_seconds() >= 5 || index == 0 || index == generations_count - 1 {
+    if passed.num_seconds() >= 5 || index == 0 || index == context.generations_count - 1 {
         pb_main.set_message(&format!("(repeats: {})", repeats_counter));
 
-        for (i, item) in population.iter().take(results_count).enumerate() {
+        for (i, item) in population.iter().take(context.results_count).enumerate() {
             let text = item.to_string();
             progress_bars[i].set_message(&text);
         }
 
         pb_main.set_position(index as u64);
-        TBehaviour::save(&population).unwrap();
+        TBehaviour::save(
+            &population
+                .iter()
+                .take(context.population_size)
+                .cloned()
+                .collect_vec(),
+        )
+        .unwrap();
 
         return Some(Utc::now());
     }
