@@ -28,11 +28,11 @@ pub struct CliSettings {
     pub population_size: u16,
 
     #[structopt(short = "c", long = "children-count", default_value = "10")]
-    pub children_count: u16,
+    pub children_count: u32,
 
     /// how long we run a genetic algorithm.
     #[structopt(short = "g", long = "generations-count", default_value = "1000")]
-    pub generations_count: u16,
+    pub generations_count: u32,
 
     /// how much we render in at the end
     #[structopt(short = "r", long = "results-count", default_value = "20")]
@@ -44,7 +44,7 @@ pub struct CliSettings {
     /// how much we continue on the same result.\
     /// if generations are not evolving not much sense to continue.
     #[structopt(long = "repeats-count", default_value = "100")]
-    pub repeats_count: u16,
+    pub repeats_count: u8,
 }
 
 pub type DynError = Box<dyn Error>;

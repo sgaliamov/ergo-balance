@@ -24,7 +24,7 @@ pub struct Keyboard {
     /// Right part mirrored left.
     /// `_` means a skipped and blocked key.
     pub keys: Keys,
-    pub score: (f64, u16, u16, u16),
+    pub score: (f64, u32, u32, u32),
 
     pub mutations: Vec<Mutation>,
     pub parent_version: String,
@@ -35,7 +35,7 @@ impl Keyboard {
     pub fn new(
         version: String,
         keys: Keys,
-        score: (f64, u16, u16, u16),
+        score: (f64, u32, u32, u32),
         mutations: Vec<Mutation>,
         parent_version: String,
         parent: Keys,
@@ -131,7 +131,7 @@ impl IIndividual<Mutation> for Keyboard {
 
         let (effort, left_counter, right_counter, switch) = self.score;
         format!(
-            "{}  {};{};{};{};{:.3};{:.3};{:.5}",
+            "{}  {};{};{};{};{:.4};{:.4};{:.2}",
             left,
             right,
             left_counter,
@@ -155,7 +155,7 @@ fn box_keyboard(keyboard: Keyboard) -> Box<Keyboard> {
 /// better the ballance lower the factor.\
 /// the ideal factor is 1 for the ideal balance (50x50).\
 /// 1 means that the factor does not affect a score.
-pub fn get_factor(left_score: u16, right_score: u16) -> f64 {
+pub fn get_factor(left_score: u32, right_score: u32) -> f64 {
     let ballance = get_balance(left_score, right_score);
 
     // https://www.desmos.com/calculator
@@ -163,7 +163,7 @@ pub fn get_factor(left_score: u16, right_score: u16) -> f64 {
     3. - (2. / ((ballance - 1.).powi(2) + 1.))
 }
 
-fn get_balance(left_score: u16, right_score: u16) -> f64 {
+fn get_balance(left_score: u32, right_score: u32) -> f64 {
     if left_score.cmp(&right_score) == Ordering::Greater {
         return left_score as f64 / right_score as f64;
     }

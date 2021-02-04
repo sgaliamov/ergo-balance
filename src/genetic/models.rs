@@ -42,11 +42,11 @@ pub trait IBehaviour<TMutation: IMutation, TIndividual: IIndividual<TMutation>>:
 pub struct Context {
     pub mutations_count: usize,
     pub population_size: usize,
-    pub children_count: u16,
-    pub generations_count: u16,
+    pub children_count: u32,
+    pub generations_count: u32,
     pub results_count: usize,
     pub left_count: usize,
-    pub repeats_count: u16,
+    pub repeats_count: u8,
 }
 
 impl Context {

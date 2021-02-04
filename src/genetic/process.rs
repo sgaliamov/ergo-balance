@@ -101,13 +101,13 @@ where
 }
 
 fn need_to_continue<TMutation, TIndividual, TBehaviour>(
-    mut repeats_counter: u16,
+    mut repeats_counter: u8,
     prev_result: &Vec<Box<TIndividual>>,
     population: &Vec<Box<TIndividual>>,
     results_count: usize,
-    max_repeats_count: u16,
+    max_repeats_count: u8,
     behaviour: &TBehaviour,
-) -> (u16, Vec<Box<TIndividual>>, bool)
+) -> (u8, Vec<Box<TIndividual>>, bool)
 where
     TIndividual: IIndividual<TMutation>,
     TMutation: IMutation,
@@ -138,13 +138,13 @@ where
 }
 
 fn render_progress<TMutation, TIndividual, TBehaviour>(
-    index: u16,
+    index: u32,
     prev: DateTime<Utc>,
     pb_main: &ProgressBar,
     progress_bars: &Vec<ProgressBar>,
     population: &Vec<Box<TIndividual>>,
     context: &Context,
-    repeats_counter: u16,
+    repeats_counter: u8,
 ) -> Option<DateTime<Utc>>
 where
     TIndividual: IIndividual<TMutation>,

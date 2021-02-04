@@ -4,13 +4,13 @@ use itertools::Itertools;
 use std::collections::HashMap;
 
 /// lower score better because it shows less efforts and better ballance.
-pub fn calculate_score(this: &Behaviour, keyboard: &Keys) -> (f64, u16, u16, u16) {
+pub fn calculate_score(this: &Behaviour, keyboard: &Keys) -> (f64, u32, u32, u32) {
     let (effort, left, right, switch) = this
         .words
         .iter()
         .map(|x| calculate_word_score(this, keyboard, x))
         .fold(
-            (0., 0, 0,0),
+            (0., 0, 0, 0),
             |(effort_total, left_total, right_total, switch_total),
              (word_effort, word_left, word_right, word_switch)| {
                 (
@@ -32,7 +32,7 @@ fn calculate_word_score(
     behaviour: &Behaviour,
     keyboard: &HashMap<char, Position>,
     word: &str,
-) -> (f64, u16, u16, u16) {
+) -> (f64, u32, u32, u32) {
     #[inline]
     fn is_left(position: Position) -> bool {
         position < 15
@@ -51,7 +51,7 @@ fn calculate_word_score(
             let b_is_left = is_left(key_b);
             let both_left = a_is_left && b_is_left;
             let both_right = !a_is_left && !b_is_left;
-            let switch = !both_left && !both_right;
+            let switch = a_is_left != b_is_left;
 
             if switch {
                 // key "a" is counted in a previous iteration,
@@ -61,9 +61,9 @@ fn calculate_word_score(
 
                 return (
                     behaviour.switch_penalty * effort,
-                    both_left as u16,
-                    both_right as u16,
-                    switch as u16,
+                    both_left as u32,
+                    both_right as u32,
+                    switch as u32,
                 );
             }
 
@@ -72,20 +72,21 @@ fn calculate_word_score(
             if key_a == key_b {
                 return (
                     effort * behaviour.same_key_penalty,
-                    both_left as u16,
-                    both_right as u16,
-                    switch as u16,
+                    both_left as u32,
+                    both_right as u32,
+                    switch as u32,
                 );
             }
 
-            (effort, both_left as u16, both_right as u16, switch as u16)
+            (effort, both_left as u32, both_right as u32, switch as u32)
         })
         .fold(
-            (0., 0_u16, 0_u16, 0_u16),
+            (0., 0, 0, 0),
             |(total, left, right, total_switch), (effort, both_left, both_right, switch)| {
                 (
-                    // we get extra bonus if we use one hand continuously for longer
-                    effort + total - both_left as f64 - both_right as f64 + switch as f64,
+                    // we get extra bonus if we use one hand continuously for longer  + (switch - both_left - both_right) as f64
+                    // but switch_penalty should cover it
+                    effort + total,
                     left + both_left,
                     right + both_right,
                     total_switch + switch,
