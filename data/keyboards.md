@@ -18,6 +18,8 @@ jmdpq asreb zxcvk  wyth_ uilno fg___
 jmdpq asreu zxcvk  byth_ filno wg___
 jmdpq asreu zxcvk  ywth_ folni bg___
 jmduq asrep zxcvk  ywth_ folni bg___
+jmubq aserp zxcvk  wyth_ dilno fg___
+jmubq aserp zxcvk  wyth_ filno gd___
 jmydg asref zxcvb  qwhk_ ltnio up___
 jpdmk asreu zxcvq  byth_ filno wg___
 jpdmq asreu zxcvk  byth_ filon wg___
