@@ -24,7 +24,7 @@ pub struct Keyboard {
     /// Right part mirrored left.
     /// `_` means a skipped and blocked key.
     pub keys: Keys,
-    pub score: (f64, u16, u16),
+    pub score: (f64, u16, u16, u16),
 
     pub mutations: Vec<Mutation>,
     pub parent_version: String,
@@ -35,7 +35,7 @@ impl Keyboard {
     pub fn new(
         version: String,
         keys: Keys,
-        score: (f64, u16, u16),
+        score: (f64, u16, u16, u16),
         mutations: Vec<Mutation>,
         parent_version: String,
         parent: Keys,
@@ -129,13 +129,14 @@ impl IIndividual<Mutation> for Keyboard {
             })
             .join(" ");
 
-        let (effort, left_counter, right_counter) = self.score;
+        let (effort, left_counter, right_counter, switch) = self.score;
         format!(
-            "{}  {};{};{};{:.3};{:.3};{:.5}",
+            "{}  {};{};{};{};{:.3};{:.3};{:.5}",
             left,
             right,
             left_counter,
             right_counter,
+            switch,
             get_balance(left_counter, right_counter),
             get_factor(left_counter, right_counter),
             effort
@@ -191,7 +192,7 @@ pub mod tests {
                 .cloned()
                 .collect(),
             parent_version: "parent_version".to_string(),
-            score: (1., 1, 2),
+            score: (1., 1, 2, 3),
             version: "version".to_string(),
         };
 
@@ -207,7 +208,7 @@ pub mod tests {
             .to_vec(),
             parent: [('a', 0_u8)].iter().cloned().collect(),
             parent_version: "parent_version2".to_string(),
-            score: (2., 3, 4),
+            score: (2., 3, 4, 5),
             version: "version2".to_string(),
         };
 
