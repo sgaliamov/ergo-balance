@@ -1,7 +1,7 @@
 # Keyboards
 
 ``` csv
-kbdmj asreu zxcvq  ywth_ polni fg___; 896; 893; 1.003; 1.000; 4578.03307; 0.1-29
+jpmbq asrey zxcvk  whtf_ uilno gd___
 ```
 
 ``` csv
