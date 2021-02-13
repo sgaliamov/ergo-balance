@@ -8,8 +8,6 @@ Don't ask why...
 
 ## Plan
 
-1. Review schema.
-1. Run on 100% valid schema.
 1. Do same with all unblock keys.
 1. Write review post.
 1. Clean redundant code.
