@@ -5,7 +5,7 @@ use std::collections::HashMap;
 
 /// lower score better because it shows less efforts and better ballance.
 pub fn calculate_score(this: &Behaviour, keyboard: &Keys) -> Score {
-    let (effort, left, right, switch, left_effort, right_effort) = this
+    let (effort, left_counter, right_counter, switch, left_effort, right_effort) = this
         .words
         .iter()
         .map(|x| calculate_word_score(this, keyboard, x))
@@ -41,7 +41,14 @@ pub fn calculate_score(this: &Behaviour, keyboard: &Keys) -> Score {
     let factor = get_factor(left_effort, right_effort);
     let effort = effort * factor;
 
-    (effort, left, right, switch, left_effort, right_effort)
+    (
+        effort,
+        left_counter,
+        right_counter,
+        switch,
+        left_effort,
+        right_effort,
+    )
 }
 
 fn calculate_word_score(
@@ -80,7 +87,8 @@ fn calculate_word_score(
                     both_left as u32,
                     both_right as u32,
                     switch as u32,
-                    b_is_left,
+                    if both_left { effort } else { 0. },
+                    if both_right { effort } else { 0. },
                 );
             }
 
@@ -92,7 +100,8 @@ fn calculate_word_score(
                     both_left as u32,
                     both_right as u32,
                     switch as u32,
-                    b_is_left,
+                    if both_left { effort } else { 0. },
+                    if both_right { effort } else { 0. },
                 );
             }
 
@@ -101,20 +110,21 @@ fn calculate_word_score(
                 both_left as u32,
                 both_right as u32,
                 switch as u32,
-                b_is_left,
+                if both_left { effort } else { 0. },
+                if both_right { effort } else { 0. },
             )
         })
         .fold(
             (0., 0, 0, 0, 0., 0.),
-            |(total, left, right, total_switch, left_effort, right_effort),
-             (effort, both_left, both_right, switch, is_left)| {
+            |(total, left, right, total_switch, total_left_effort, total_right_effort),
+             (effort, both_left, both_right, switch, left_effort, right_effort)| {
                 (
                     effort + total,
                     left + both_left,
                     right + both_right,
                     total_switch + switch,
-                    left_effort + (if is_left { effort } else { 0. }),
-                    right_effort + (if !is_left { effort } else { 0. }),
+                    total_left_effort + left_effort,
+                    total_right_effort + right_effort,
                 )
             },
         );
