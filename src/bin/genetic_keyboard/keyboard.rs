@@ -12,6 +12,7 @@ pub struct Mutation {
 impl IMutation for Mutation {}
 
 pub type Keys = HashMap<char, Position>;
+pub type Score = (f64, u32, u32, u32, f64, f64);
 
 #[derive(Debug, Clone)]
 pub struct Keyboard {
@@ -24,7 +25,7 @@ pub struct Keyboard {
     /// Right part mirrored left.
     /// `_` means a skipped and blocked key.
     pub keys: Keys,
-    pub score: (f64, u32, u32, u32),
+    pub score: Score,
 
     pub mutations: Vec<Mutation>,
     pub parent_version: String,
@@ -35,7 +36,7 @@ impl Keyboard {
     pub fn new(
         version: String,
         keys: Keys,
-        score: (f64, u32, u32, u32),
+        score: Score,
         mutations: Vec<Mutation>,
         parent_version: String,
         parent: Keys,
@@ -129,16 +130,18 @@ impl IIndividual<Mutation> for Keyboard {
             })
             .join(" ");
 
-        let (effort, left_counter, right_counter, switch) = self.score;
+        let (effort, left_counter, right_counter, switch, left_effort, right_effort) = self.score;
         format!(
-            "{}  {};{};{};{};{:.4};{:.4};{:.2}",
+            "{}  {};{};{};{};{:.3};{:.2};{:.2};{:.3};{:.2}",
             left,
             right,
             left_counter,
             right_counter,
             switch,
-            get_balance(left_counter, right_counter),
-            get_factor(left_counter, right_counter),
+            get_balance(left_counter as f64, right_counter as f64),
+            left_effort,
+            right_effort,
+            get_factor(left_effort, right_effort),
             effort
         )
     }
@@ -155,20 +158,20 @@ fn box_keyboard(keyboard: Keyboard) -> Box<Keyboard> {
 /// better the ballance lower the factor.\
 /// the ideal factor is 1 for the ideal balance (50x50).\
 /// 1 means that the factor does not affect a score.
-pub fn get_factor(left_score: u32, right_score: u32) -> f64 {
+pub fn get_factor(left_score: f64, right_score: f64) -> f64 {
     let ballance = get_balance(left_score, right_score);
 
     // https://www.desmos.com/calculator
     // bigger power - less strict ballance
-    3. - (2. / ((ballance - 1.).powi(3) + 1.))
+    3. - (2. / ((ballance - 1.).powi(2) + 1.))
 }
 
-fn get_balance(left_score: u32, right_score: u32) -> f64 {
-    if left_score.cmp(&right_score) == Ordering::Greater {
-        return left_score as f64 / right_score as f64;
+fn get_balance(left_score: f64, right_score: f64) -> f64 {
+    if left_score.partial_cmp(&right_score).unwrap() == Ordering::Greater {
+        return left_score / right_score;
     }
 
-    right_score as f64 / left_score as f64
+    right_score / left_score
 }
 
 #[cfg(test)]
@@ -192,7 +195,7 @@ pub mod tests {
                 .cloned()
                 .collect(),
             parent_version: "parent_version".to_string(),
-            score: (1., 1, 2, 3),
+            score: (1., 1, 2, 3, 4., 5.),
             version: "version".to_string(),
         };
 
@@ -208,7 +211,7 @@ pub mod tests {
             .to_vec(),
             parent: [('a', 0_u8)].iter().cloned().collect(),
             parent_version: "parent_version2".to_string(),
-            score: (2., 3, 4, 5),
+            score: (2., 3, 4, 5, 6., 7.),
             version: "version2".to_string(),
         };
 

@@ -27,7 +27,7 @@ impl IBehaviour<Mutation, Keyboard> for Behaviour {
     }
 
     fn calculate_score(&self, individual: &Keyboard) -> f64 {
-        let (effort, _, _, _) = score_calculator::calculate_score(&self, &individual.keys);
+        let (effort, _, _, _, _, _) = score_calculator::calculate_score(&self, &individual.keys);
         effort
     }
 
@@ -44,8 +44,8 @@ impl IBehaviour<Mutation, Keyboard> for Behaviour {
     }
 
     fn score_cmp(&self, a: &Keyboard, b: &Keyboard) -> Ordering {
-        let (a_total, _, _, _) = a.score;
-        let (b_total, _, _, _) = b.score;
+        let (a_total, _, _, _, _, _) = a.score;
+        let (b_total, _, _, _, _, _) = b.score;
 
         fn get_sorted_position(keys: &Keys) -> Vec<&Position> {
             keys.iter()
@@ -211,7 +211,7 @@ pub mod tests {
             mutations: Vec::new(),
             parent: HashMap::new(),
             parent_version: "parent_version".to_string(),
-            score: (0., 0, 0, 0),
+            score: (0., 0, 0, 0, 0., 0.),
             version: "version".to_string(),
         };
 
