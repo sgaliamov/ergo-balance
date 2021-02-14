@@ -160,7 +160,7 @@ pub fn get_factor(left_score: u32, right_score: u32) -> f64 {
 
     // https://www.desmos.com/calculator
     // bigger power - less strict ballance
-    3. - (2. / ((ballance - 1.).powi(2) + 1.))
+    3. - (2. / ((ballance - 1.).powi(3) + 1.))
 }
 
 fn get_balance(left_score: u32, right_score: u32) -> f64 {
