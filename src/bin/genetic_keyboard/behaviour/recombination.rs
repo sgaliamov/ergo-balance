@@ -37,6 +37,7 @@ pub fn cross(this: &Behaviour, individual: &Keyboard, partner: &Keyboard) -> Box
     let score = calculate_score(this, &keys);
 
     debug_assert_eq!(keys.len(), 26);
+    debug_assert_eq!(keys.values().max().unwrap(), &29_u8);
 
     Keyboard::new(
         get_version(),

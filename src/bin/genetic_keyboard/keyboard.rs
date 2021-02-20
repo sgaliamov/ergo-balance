@@ -41,6 +41,9 @@ impl Keyboard {
         parent_version: String,
         parent: Keys,
     ) -> Box<Keyboard> {
+        debug_assert_eq!(keys.len(), 26);
+        debug_assert_eq!(keys.values().max().unwrap(), &29_u8);
+
         box_keyboard(Keyboard {
             version,
             keys,
