@@ -94,6 +94,8 @@ fn load_efforts(json: &Value) -> Option<Efforts> {
     let max = json["maxEffort"].as_f64()?;
     let factor = get_factor(max);
     let mut left = parse_efforts(json, 0, factor)?;
+    // the right part is symmetrical to the left so we can just add 15 to get right efforts.
+    // for a standard keyboard it will be easier to have all efforts in the json file.
     let right = parse_efforts(json, 15, factor)?;
     left.extend(right);
 
