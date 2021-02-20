@@ -27,6 +27,7 @@
       "name": "Debug genetic keyboard",
       "type": "lldb",
       "request": "launch",
+      "preLaunchTask": "Build",
       "program": "${workspaceRoot}/target/debug/genetic_keyboard.exe",
       "env": { "RUST_BACKTRACE": "1" },
       "args": [
