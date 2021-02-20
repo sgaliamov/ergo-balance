@@ -110,7 +110,7 @@ impl IIndividual<Mutation> for Keyboard {
 
         let left = sorted
             .iter()
-            .take(15)
+            .filter(|(_, &p)| p < 15)
             .group_by(|(_, &p)| p / 5)
             .into_iter()
             .map(|(_, x)| {
@@ -120,7 +120,7 @@ impl IIndividual<Mutation> for Keyboard {
 
         let right = sorted
             .iter()
-            .skip(15)
+            .filter(|(_, &p)| p >= 15)
             .group_by(|(_, &p)| p / 5)
             .into_iter()
             .map(|(_, x)| {
