@@ -6,9 +6,9 @@ It has an implementation of a genetic algorithm that looks for an "optimal" bala
 
 Don't ask why...
 
-## Plan
+## State
 
-1. Do same with all unblock keys.
-1. Write review post.
-1. Clean redundant code.
-1. Write post about genetic algorithm.
+The project is frozen now for the next reasons:
+
+1. When move buttons, other layouts are broken.
+1. When use MKLC, shortcuts stays in same places, which is confusing.
