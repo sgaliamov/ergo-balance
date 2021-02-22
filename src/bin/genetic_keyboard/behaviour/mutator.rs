@@ -1,8 +1,8 @@
-use super::{score_calculator::get_score, Behaviour};
+use super::{score_calculator::calculate_score, Behaviour};
 use crate::keyboard::{Keyboard, Keys, Mutation};
 use ed_balance::get_version;
 use itertools::Itertools;
-use rand::{prelude::SliceRandom, thread_rng};
+use rand::{prelude::SliceRandom, thread_rng, RngCore};
 
 pub fn mutate(this: &Behaviour, individual: &Keyboard) -> Box<Keyboard> {
     let mut rng = thread_rng();
@@ -15,8 +15,9 @@ pub fn mutate(this: &Behaviour, individual: &Keyboard) -> Box<Keyboard> {
         .collect_vec();
 
     keys.shuffle(&mut rng);
+    let mutations_count = 1 + (rng.next_u32() as usize % this.context.mutations_count);
 
-    for index in 0..this.context.mutations_count {
+    for index in 0..mutations_count {
         let second_index = keys.len() - index - 1;
         let (first_char, first) = keys[index];
         let (second_char, second) = keys[second_index];
@@ -29,7 +30,9 @@ pub fn mutate(this: &Behaviour, individual: &Keyboard) -> Box<Keyboard> {
     let version = get_version();
     let keys: Keys = keys.into_iter().merge(this.frozen_keys.clone()).collect();
     debug_assert_eq!(keys.len(), individual.keys.len());
-    let score = get_score(this, &keys);
+    debug_assert_eq!(keys.values().max().unwrap(), &29_u8);
+
+    let score = calculate_score(this, &keys);
 
     Keyboard::new(
         version,

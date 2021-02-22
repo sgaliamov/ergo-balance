@@ -6,9 +6,9 @@ It has an implementation of a genetic algorithm that looks for an "optimal" bala
 
 Don't ask why...
 
-## Plan
+## State
 
-1. Find stable layouts on 29.
-1. Use them on 123 and find next stable.
-1. Use results on big text.
-1. Do same with all unblock keys.
+The project is frozen now for the next reasons:
+
+1. When move buttons, other layouts are broken.
+1. When use MKLC, shortcuts stays in same places, which is confusing.

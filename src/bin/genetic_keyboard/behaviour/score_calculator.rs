@@ -1,36 +1,61 @@
 use super::{Behaviour, Position};
-use crate::keyboard::{get_factor, Keys};
+use crate::keyboard::{get_factor, Keys, Score};
 use itertools::Itertools;
 use std::collections::HashMap;
 
 /// lower score better because it shows less efforts and better ballance.
-pub fn get_score(this: &Behaviour, keyboard: &Keys) -> (f64, u16, u16) {
-    let (effort, left, right) = this
+pub fn calculate_score(this: &Behaviour, keyboard: &Keys) -> Score {
+    let (effort, left_counter, right_counter, switch, left_effort, right_effort) = this
         .words
         .iter()
-        .map(|x| get_word_score(this, keyboard, x))
+        .map(|x| calculate_word_score(this, keyboard, x))
         .fold(
-            (0., 0, 0),
-            |(effort_total, left_total, right_total), (effort, left, right)| {
+            (0., 0, 0, 0, 0., 0.),
+            |(
+                effort_total,
+                left_total,
+                right_total,
+                switch_total,
+                left_effort_total,
+                right_effort_total,
+            ),
+             (
+                word_effort,
+                word_left,
+                word_right,
+                word_switch,
+                word_left_effort,
+                word_right_effort,
+            )| {
                 (
-                    effort_total + effort,
-                    left + left_total,
-                    right + right_total,
+                    effort_total + word_effort,
+                    left_total + word_left,
+                    right_total + word_right,
+                    switch_total + word_switch,
+                    left_effort_total + word_left_effort,
+                    right_effort_total + word_right_effort,
                 )
             },
         );
 
-    let factor = get_factor(left, right);
+    let factor = get_factor(left_effort, right_effort);
     let effort = effort * factor;
 
-    (effort, left, right)
+    (
+        effort,
+        left_counter,
+        right_counter,
+        switch,
+        left_effort,
+        right_effort,
+    )
 }
 
-fn get_word_score(
+fn calculate_word_score(
     behaviour: &Behaviour,
     keyboard: &HashMap<char, Position>,
     word: &str,
-) -> (f64, u16, u16) {
+) -> Score {
     #[inline]
     fn is_left(position: Position) -> bool {
         position < 15
@@ -38,8 +63,8 @@ fn get_word_score(
 
     let chars = word.chars().collect_vec();
     let key = keyboard[&chars[0]];
-    let first = behaviour.efforts[&key][&key];
-    let (score, left, right) = chars
+    let first = behaviour.efforts[&key][&key]; // to count the score for the first or one letter
+    let (score, left, right, switch, left_effort, right_effort) = chars
         .iter()
         .tuple_windows()
         .map(|(a, b)| {
@@ -47,34 +72,69 @@ fn get_word_score(
             let key_b = keyboard[b];
             let a_is_left = is_left(key_a);
             let b_is_left = is_left(key_b);
-            let same_part = !a_is_left && !b_is_left || a_is_left && b_is_left;
+            let both_left = a_is_left && b_is_left;
+            let both_right = !a_is_left && !b_is_left;
+            let switch = a_is_left != b_is_left;
 
-            if !same_part {
-                return (behaviour.switch_penalty, b_is_left);
+            if switch {
+                // key "a" is counted in a previous iteration,
+                // so whe we have the hand switch we need to count effort on the second letters,
+                // because the next hand "start" typing.
+                let effort = behaviour.efforts[&key_b][&key_b];
+
+                return (
+                    behaviour.switch_penalty * effort,
+                    both_left as u32,
+                    both_right as u32,
+                    switch as u32,
+                    if both_left { effort } else { 0. },
+                    if both_right { effort } else { 0. },
+                );
             }
 
             let effort = behaviour.efforts[&key_a][&key_b];
 
             if key_a == key_b {
-                return (effort * behaviour.same_key_penalty, b_is_left);
+                return (
+                    effort * behaviour.same_key_penalty,
+                    both_left as u32,
+                    both_right as u32,
+                    switch as u32,
+                    if both_left { effort } else { 0. },
+                    if both_right { effort } else { 0. },
+                );
             }
 
-            (effort, b_is_left)
+            (
+                effort,
+                both_left as u32,
+                both_right as u32,
+                switch as u32,
+                if both_left { effort } else { 0. },
+                if both_right { effort } else { 0. },
+            )
         })
         .fold(
-            (0., 0_u16, 0_u16),
-            |(total, left, right), (effort, is_left)| {
+            (0., 0, 0, 0, 0., 0.),
+            |(total, left, right, total_switch, total_left_effort, total_right_effort),
+             (effort, both_left, both_right, switch, left_effort, right_effort)| {
                 (
                     effort + total,
-                    left + is_left as u16,
-                    right + !is_left as u16,
+                    left + both_left,
+                    right + both_right,
+                    total_switch + switch,
+                    total_left_effort + left_effort,
+                    total_right_effort + right_effort,
                 )
             },
         );
 
     (
         score + first,
-        left + is_left(key) as u16,
-        right + !is_left(key) as u16,
+        left,
+        right,
+        switch,
+        left_effort,
+        right_effort,
     )
 }

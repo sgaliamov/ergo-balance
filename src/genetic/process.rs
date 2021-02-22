@@ -1,6 +1,7 @@
-use crate::{CliSettings, DynError, GeneticAlgorithm, IBehaviour, IIndividual, IMutation};
+use crate::{CliSettings, Context, DynError, GeneticAlgorithm, IBehaviour, IIndividual, IMutation};
 use chrono::prelude::*;
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
+use itertools::Itertools;
 use std::{sync::Arc, thread};
 
 pub fn run<TMutation, TIndividual, TBehaviour>(settings: CliSettings) -> Result<(), DynError>
@@ -11,14 +12,12 @@ where
 {
     let settings = Arc::new(settings);
     let progress = MultiProgress::new();
-
     let pb_main = ProgressBar::new(settings.generations_count as u64);
     pb_main.set_style(
         ProgressStyle::default_bar()
             .template("[{elapsed_precise}] {bar} {pos}/{len} ({eta}) {msg}"),
     );
     let pb_main = progress.add(pb_main);
-
     let spinner_style = ProgressStyle::default_spinner().template("{wide_msg}");
     let progress_bars: Vec<ProgressBar> = (0..settings.results_count)
         .map(|_| {
@@ -40,102 +39,137 @@ where
             .collect();
         population.extend(behaviour.load().unwrap());
 
+        // to be able just calculate scores
+        if context.generations_count == 0 {
+            TBehaviour::save(&population).unwrap();
+            return;
+        }
+
         let mut prev: DateTime<Utc> = Utc::now();
-        let mut prev_result = Vec::<Box<TIndividual>>::new();
+        let mut prev_top_result = Vec::<Box<TIndividual>>::new();
         let mut repeats_counter = 0;
 
         for index in 0..context.generations_count {
-            population = algorithm.run(&mut population).expect("All died!");
+            population = algorithm.run(&population, &context).expect("All died!");
 
-            if let Some(date) = render_progress(
+            let (repeats, top_results, to_continue) = need_to_continue(
+                repeats_counter,
+                &prev_top_result,
+                &population,
+                context.results_count,
+                context.repeats_count,
+                &behaviour,
+            );
+
+            prev_top_result = top_results;
+            repeats_counter = repeats;
+
+            if !to_continue {
+                pb_main.set_message(&format!("(repeats: {})", repeats_counter + 1));
+                break;
+            }
+
+            if let Some(date) = render_progress::<_, _, TBehaviour>(
                 index,
                 prev,
                 &pb_main,
                 &progress_bars,
                 &population,
-                context.generations_count,
-            ) {
-                prev = date
-            }
-
-            if let Some((repeats, top_results)) = need_to_continue(
+                context,
                 repeats_counter,
-                &prev_result,
-                &population,
-                context.results_count,
-                context.repeats_count,
             ) {
-                prev_result = top_results;
-                repeats_counter = repeats;
-                pb_main.set_message(&format!("(repeats: {})", repeats_counter));
-            } else {
-                pb_main.set_message(&format!("(repeats: {})", repeats_counter + 1));
-                break;
+                prev = date;
             }
-
-            TBehaviour::save(&prev_result).unwrap();
         }
 
+        render_progress::<_, _, TBehaviour>(
+            context.generations_count - 1,
+            prev,
+            &pb_main,
+            &progress_bars,
+            &population,
+            context,
+            repeats_counter,
+        );
         pb_main.finish();
         progress_bars.iter().for_each(|x| x.finish());
     });
 
-    progress.join().unwrap();
+    progress.join()?;
 
     Ok(())
 }
 
-fn need_to_continue<TMutation, TIndividual>(
-    mut repeats: u16,
+fn need_to_continue<TMutation, TIndividual, TBehaviour>(
+    mut repeats_counter: u8,
     prev_result: &Vec<Box<TIndividual>>,
     population: &Vec<Box<TIndividual>>,
     results_count: usize,
-    repeats_count: u16,
-) -> Option<(u16, Vec<Box<TIndividual>>)>
+    max_repeats_count: u8,
+    behaviour: &TBehaviour,
+) -> (u8, Vec<Box<TIndividual>>, bool)
 where
     TIndividual: IIndividual<TMutation>,
     TMutation: IMutation,
+    TBehaviour: IBehaviour<TMutation, TIndividual>,
 {
-    let top_results: Vec<_> = population
+    let top_results = population
         .iter()
         .take(results_count)
-        .map(|x| x.clone())
-        .collect();
+        .sorted_by(|&a, &b| {
+            behaviour
+                .score_cmp(a, b)
+                .then_with(|| a.to_string().cmp(&b.to_string()))
+        })
+        .cloned()
+        .collect_vec();
 
     if prev_result.eq(&top_results) {
-        repeats += 1;
+        repeats_counter += 1;
     } else {
-        repeats = 0;
+        repeats_counter = 0;
     }
 
-    if repeats == repeats_count {
-        return None;
+    if repeats_counter == max_repeats_count {
+        return (repeats_counter, top_results, false);
     }
 
-    Some((repeats, top_results))
+    (repeats_counter, top_results, true)
 }
 
-fn render_progress<TMutation, TIndividual>(
-    index: u16,
+fn render_progress<TMutation, TIndividual, TBehaviour>(
+    index: u32,
     prev: DateTime<Utc>,
     pb_main: &ProgressBar,
     progress_bars: &Vec<ProgressBar>,
     population: &Vec<Box<TIndividual>>,
-    generations_count: u16,
+    context: &Context,
+    repeats_counter: u8,
 ) -> Option<DateTime<Utc>>
 where
     TIndividual: IIndividual<TMutation>,
     TMutation: IMutation,
+    TBehaviour: IBehaviour<TMutation, TIndividual>,
 {
     let passed = Utc::now() - prev;
 
-    if passed.num_seconds() >= 5 || index == 0 || index == generations_count - 1 {
-        for (i, item) in population.iter().take(progress_bars.len()).enumerate() {
+    if passed.num_seconds() >= 5 || index == 0 || index == context.generations_count - 1 {
+        pb_main.set_message(&format!("(repeats: {})", repeats_counter));
+
+        for (i, item) in population.iter().take(context.results_count).enumerate() {
             let text = item.to_string();
             progress_bars[i].set_message(&text);
         }
 
         pb_main.set_position(index as u64);
+        TBehaviour::save(
+            &population
+                .iter()
+                .take(context.population_size)
+                .cloned()
+                .collect_vec(),
+        )
+        .unwrap();
 
         return Some(Utc::now());
     }

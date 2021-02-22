@@ -1,4 +1,4 @@
-use super::{score_calculator::get_score, Behaviour};
+use super::{score_calculator::calculate_score, Behaviour};
 use crate::keyboard::{Keyboard, Keys};
 use ed_balance::get_version;
 use itertools::Itertools;
@@ -34,9 +34,10 @@ pub fn cross(this: &Behaviour, individual: &Keyboard, partner: &Keyboard) -> Box
         .map(|(&key, &value)| (value, key))
         .collect();
 
-    let score = get_score(this, &keys);
+    let score = calculate_score(this, &keys);
 
     debug_assert_eq!(keys.len(), 26);
+    debug_assert_eq!(keys.values().max().unwrap(), &29_u8);
 
     Keyboard::new(
         get_version(),

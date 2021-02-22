@@ -11,7 +11,7 @@ pub fn create(settings: &CliSettings) -> Option<Behaviour> {
     let context = Context::new(settings);
     let path = settings.keyboard.clone()?;
     let json = load_json(&path)?;
-    let words = load_words(&json)?;
+    let words = load_words(&settings.text.clone()?)?;
     let frozen_keys = load_frozen(&json)?;
     let efforts = load_efforts(&json)?;
     let switch_penalty = json["switchPenalty"].as_f64()?;
@@ -33,9 +33,8 @@ pub fn create(settings: &CliSettings) -> Option<Behaviour> {
     })
 }
 
-fn load_words(json: &Value) -> Option<Vec<String>> {
-    let sample_path = json["samplePath"].as_str()?;
-    let text = std::fs::read_to_string(sample_path).ok()?;
+fn load_words(path: &PathBuf) -> Option<Vec<String>> {
+    let text = std::fs::read_to_string(path).ok()?;
     let words = text.split(' ').map_into().collect_vec();
     Some(words)
 }
@@ -95,6 +94,8 @@ fn load_efforts(json: &Value) -> Option<Efforts> {
     let max = json["maxEffort"].as_f64()?;
     let factor = get_factor(max);
     let mut left = parse_efforts(json, 0, factor)?;
+    // the right part is symmetrical to the left so we can just add 15 to get right efforts.
+    // for a standard keyboard it will be easier to have all efforts in the json file.
     let right = parse_efforts(json, 15, factor)?;
     left.extend(right);
 

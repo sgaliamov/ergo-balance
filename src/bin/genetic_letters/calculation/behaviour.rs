@@ -1,6 +1,6 @@
 use super::{Letters, LettersPointer, Mutation};
 use ed_balance::{
-    get_score, get_version,
+    calculate_score, get_version,
     models::{CliSettings, Digraphs},
     Context, IBehaviour,
 };
@@ -75,8 +75,8 @@ impl IBehaviour<Mutation, Letters> for Behaviour {
         )
     }
 
-    fn get_score(&self, individual: &Letters) -> f64 {
-        get_score(individual.left_score, individual.right_score)
+    fn calculate_score(&self, individual: &Letters) -> f64 {
+        calculate_score(individual.left_score, individual.right_score)
     }
 
     fn cross(&self, individual: &Letters, partner: &Letters) -> LettersPointer {

@@ -1,41 +1,120 @@
 # Keyboards
 
 ``` csv
+jpmbq asrey zxcvk  whtf_ uilno gd___
 
-kpdmj asreu zxcvq  wyth_ folni bg___; 918; 871; 1.054; 1.003; 4620.434;
+
+jpmyq asreb zxcvk  whtu_ dnloi gf___;100872;105820;170157;1.049;136853.00;134955.50;1.000;1346342.75
+jpmbq asrey zxcvk  whtu_ dnloi gf___;100872;105820;170157;1.049;136882.00;134955.50;1.000;1346388.14
+jpmyq asreb zxcvk  whtf_ dilno gu___;100872;105820;170157;1.049;136853.00;135322.50;1.000;1346522.10
+jpmbq asrey zxcvk  whtf_ dilno gu___;100872;105820;170157;1.049;136882.00;135322.50;1.000;1346564.28
+jpmyq asreb zxcvk  wuth_ dnloi gf___;100872;105820;170157;1.049;136853.00;135520.50;1.000;1346636.05
+jpmbq asrey zxcvk  wuth_ dnloi gf___;100872;105820;170157;1.049;136882.00;135520.50;1.000;1346676.51
+jpmyq asreb zxcvk  whtu_ dnlio gf___;100872;105820;170157;1.049;136853.00;135743.00;1.000;1346778.32
+jpmyq asreb zxcvk  whtf_ dolni gu___;100872;105820;170157;1.049;136853.00;135744.00;1.000;1346779.00
+jpmbq asrey zxcvk  whtu_ dnlio gf___;100872;105820;170157;1.049;136882.00;135743.00;1.000;1346816.86
+jpmbq asrey zxcvk  whtf_ dolni gu___;100872;105820;170157;1.049;136882.00;135744.00;1.000;1346817.52
+
+```
+
+``` csv
+jpmbk asrey zxcvw  qhtf_ uilno gd___
+jpmbq asrey zxcvk  whtf_ uilno gd___
+jpmbq asrey zxcvk  wfth_ uilno gd___
+jpmyq asreb zxcvk  whtf_ uilno gd___
+jpmyq asreb zxcvk  wfth_ uilno gd___
+jpmbq asrey zxcvk  wuth_ filno gd___
+jbdmk asreu zxcvq  whty_ folin pg___
+jbdmk asreu zxcvq  ywth_ polni fg___
+jbduq asrem zxcvk  whty_ folni pg___
+jbduq asrem zxcvk  whty_ polni fg___
+jbduq asrem zxcvk  wyth_ polni fg___
+jbumq aserp zxcvk  wyth_ dilno fg___
+jhtwq asnig zxcvk  bmed_ ulopr yf___
+jhtwq asnig zxcvk  bmed_ urolp yf___
+jmdbq asrep zxcvk  wyth_ uilno fg___
+jmdpq asreb zxcvk  wyth_ uilno fg___
+jmdpq asreu zxcvk  byth_ filno wg___
+jmdpq asreu zxcvk  ywth_ folni bg___
+jmduq asrep zxcvk  ywth_ folni bg___
+jmdwq asrep zxcvk  yfth_ uilno bg___
+jmdyq asrep zxcvk  wfth_ uilno bg___
+jmubq aserp zxcvk  wyth_ dilno fg___
+jmubq aserp zxcvk  wyth_ filno gd___
+jmydg asref zxcvb  qwhk_ ltnio up___
+jpdmk asreu zxcvq  byth_ filno wg___
+jpdmq asreu zxcvk  byth_ filon wg___
+jpmbq asreu zxcvk  ywth_ dolni fg___
+jpmbq asreu zxcvk  ywth_ lodni fg___
+jpubq aserm zxcvk  wyth_ dilno fg___
+jymdk aserf zxcvw  qplu_ gtnio bh___
+kbdmj asreu zxcvq  ywth_ polni fg___
+kbduq asrem zxcvj  wyth_ polni fg___
+kmdbj asreu zxcvq  ywth_ polni fg___
+kmpuq asred zxcvj  wyth_ folni bg___
+kpdmj asreu zxcvq  wyth_ folni bg___
+qdrwb ashtg zxcvm  jfup_ yneoi kl___
+qfmlw astnr zxcvg  yuobj ideh_ pk___
+qgmlw astnr zxcvj  byuf_ ideoh kp___
+qgmlw astnr zxcvj  yfub_ ideoh kp___
+qhidk asntm zxcvw  jyol_ fgerp bu___
+qhidk asntu zxcvw  jyol_ fgerp bm___
+qhigu asntm zxcvb  jyol_ fwerp kd___
+qhtwj asnig zxcvk  bmed_ urolp yf___
+qmdpj asreb zxcvk  wyth_ uilno fg___
+qmdpj asreu zxcvk  ywth_ folni bg___
+qmdwj asrep zxcvk  yfth_ uilno bg___
+qmubk aserw zxcvy  jghd_ foitn lp___
+qpmbj asreu zxcvk  ywth_ lodni fg___
+qpmbk asery zxcvw  jgul_ fitno hd___
+qwdfk asetg zxcvb  jurl_ ynioh pm___
+qwdrf asetg zxcvb  jypl_ huiok nm___
+qwdrf asetg zxcvb  jypl_ hunio km___
+qwdrt asefg zxcvb  jykl_ huiop nm___
+qwerf asdtg zxcvb  jylk_ huoip nm___
+qwert asdfg zxcvb  yuio_ hjklp nm___
+qwfpg asnrt zxcvb  jluy_ hdeio km___
+qwfpk asrth zxcvb  jluy_ dneio gm___
+qwldg asnrt zxcvb  juop_ kmehi yf___
+qwldp asrtg zxcvj  kmuy_ fneio bh___
+qwudp asetg zxcvb  jfyl_ hniro km___
 
 ```
 
 ## Old
 
-``` aszxcv
+### aszxcv
 
-jmydg asref zxcvb  qwhk_ ltnio up___; capewell9.2
-jymdk aserf zxcvw  qplu_ gtnio bh___; capewell9.3
-qdrwb ashtg zxcvm  jfup_ yneoi kl___; workman
-qfmlw astnr zxcvg  yuobj ideh_ pk___; qfmlwy
-qgmlw astnr zxcvj  byuf_ ideoh kp___; qgmlwb
-qhidk asntm zxcvw  jyol_ fgerp bu___; my16
-qhidk asntu zxcvw  jyol_ fgerp bm___; my14
-qgmlw astnr zxcvj  yfub_ ideoh kp___; qgmlwy
-qhigu asntm zxcvb  jyol_ fwerp kd___; my19
-qmubk aserw zxcvy  jghd_ foitn lp___; my20
-qpmbk asery zxcvw  jgul_ fitno hd___; my21
-qwdfk asetg zxcvb  jurl_ ynioh pm___; norman
-qwdrf asetg zxcvb  jypl_ huiok nm___; c-qwerty
-qwdrf asetg zxcvb  jypl_ hunio km___; c-qwerty-n
-qwdrt asefg zxcvb  jykl_ huiop nm___; c-qwerty-2
-qwerf asdtg zxcvb  jylk_ huoip nm___; qwerf
-qwert asdfg zxcvb  yuio_ hjklp nm___; qwerty
-qwfpg asnrt zxcvb  jluy_ hdeio km___; gelatin
-qwfpk arsth zxcvb  jluy_ dneio gm___; collemak
-qwldg asnrt zxcvb  juop_ kmehi yf___; kaehi
-qwldp asrtg zxcvj  kmuy_ fneio bh___; soul
-qwudp asetg zxcvb  jfyl_ hniro km___; niro
+``` csv
+
+qmubk aserw zxcvy  jghd_ foitn lp___ ;874  ;915 ;1.047 ;1.002 ;4807.18320 ; my20
+qpmbk asery zxcvw  jgul_ fitno hd___ ;874  ;915 ;1.047 ;1.002 ;4820.96598 ; my21
+jymdk aserf zxcvw  qplu_ gtnio bh___ ;900  ;889 ;1.012 ;1.000 ;4909.37439 ; capewell9.3
+jmydg asref zxcvb  qwhk_ ltnio up___ ;936  ;853 ;1.097 ;1.012 ;4982.67058 ; capewell9.2
+qwfpk asrth zxcvb  jluy_ dneio gm___ ;853  ;936 ;1.097 ;1.012 ;5241.18867 ; collemak
+qdrwb ashtg zxcvm  jfup_ yneoi kl___ ;906  ;883 ;1.026 ;1.001 ;5322.97894 ; workman
+qwldp asrtg zxcvj  kmuy_ fneio bh___ ;927  ;862 ;1.075 ;1.007 ;5406.54508 ; soul
+qwfpg asnrt zxcvb  jluy_ hdeio km___ ;952  ;837 ;1.137 ;1.025 ;5607.11314 ; gelatin
+qwdfk asetg zxcvb  jurl_ ynioh pm___ ;979  ;810 ;1.209 ;1.062 ;5618.11952 ; norman
+qhidk asntm zxcvw  jyol_ fgerp bu___ ;1021 ;768 ;1.329 ;1.160 ;5671.43611 ; my16
+qhidk asntu zxcvw  jyol_ fgerp bm___ ;1033 ;756 ;1.366 ;1.198 ;5718.85425 ; my14
+qhigu asntm zxcvb  jyol_ fwerp kd___ ;1035 ;754 ;1.373 ;1.205 ;5755.96792 ; my19
+qgmlw astnr zxcvj  yfub_ ideoh kp___ ;976  ;813 ;1.200 ;1.057 ;5775.09608 ; qgmlwy
+qgmlw astnr zxcvj  byuf_ ideoh kp___ ;976  ;813 ;1.200 ;1.057 ;5788.83247 ; qgmlwb
+qwudp asetg zxcvb  jfyl_ hniro km___ ;1042 ;747 ;1.395 ;1.229 ;6271.37898 ; niro
+qfmlw astnr zxcvg  yuobj ideh_ pk___ ;1008 ;781 ;1.291 ;1.124 ;6306.74024 ; qfmlwy
+qwldg asnrt zxcvb  juop_ kmehi yf___ ;1037 ;752 ;1.379 ;1.212 ;6710.27394 ; kaehi
+qwdrf asetg zxcvb  jypl_ hunio km___ ;1066 ;723 ;1.474 ;1.325 ;6792.89097 ; c-qwerty-n
+qwdrf asetg zxcvb  jypl_ huiok nm___ ;1066 ;723 ;1.474 ;1.325 ;6904.17383 ; c-qwerty
+qwerf asdtg zxcvb  jylk_ huoip nm___ ;1066 ;723 ;1.474 ;1.325 ;6908.47942 ; qwerf
+qwdrt asefg zxcvb  jykl_ huiop nm___ ;1066 ;723 ;1.474 ;1.325 ;7098.91883 ; c-qwerty-2
+qwert asdfg zxcvb  yuio_ hjklp nm___ ;1066 ;723 ;1.474 ;1.325 ;7238.68479 ; qwerty
 
 ```
 
-``` free
+### Others
+
+``` cvs
 
 qdrwb ashtg zxmcv  jfup_ yneoi kl___; workman
 qfmlw dstnr zvgcx  yuobj iaeh_ pk___; qfmlwy
@@ -71,6 +150,6 @@ zcihk wtang qdyxv  jfol_ pserb mu___; my12
 zhigk wnatd xmbcv  jyol_ fserp uq___; my17
 zhigk wnatu xvbcj  qyol_ fserp md___; my18
 zlapk wrenb qymhj  xgid_ fsotu vc___; arensito2
-zmadp yresf xcubv  qwhn_ ktoil jg___; capwell.ex
+zmadp yresf xcubv  qwhn_ ktoil jg___; capwell-ex
 
 ```

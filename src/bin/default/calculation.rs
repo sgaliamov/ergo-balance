@@ -1,4 +1,4 @@
-use ed_balance::models::{get_score, print_letters, CliSettings, Digraphs, DynError};
+use ed_balance::models::{calculate_score, print_letters, CliSettings, Digraphs, DynError};
 use std::collections::VecDeque;
 
 // find a pair to move to the right group that will give biggest result
@@ -70,7 +70,7 @@ fn get_letter_to_move(
                 let right: Vec<_> = right_letters.iter().map(|x| *x).collect();
                 let right_score = digraphs.calculate_score(&right);
 
-                let total_score = get_score(left_score, right_score);
+                let total_score = calculate_score(left_score, right_score);
                 if total_score < min_total {
                     left_result = left_score;
                     right_result = right_score;

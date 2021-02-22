@@ -8,6 +8,8 @@ pub trait IIndividual<TMutation: IMutation>: Clone + Eq + Hash + Send + Sync {
 
     /// Text representation.
     fn to_string(&self) -> String;
+
+    fn get_score(&self) -> f64;
 }
 
 pub trait IMutation: Sync {}
@@ -21,7 +23,7 @@ pub trait IBehaviour<TMutation: IMutation, TIndividual: IIndividual<TMutation>>:
 
     fn generate(&self) -> Box<TIndividual>;
 
-    fn get_score(&self, individual: &TIndividual) -> f64;
+    fn calculate_score(&self, individual: &TIndividual) -> f64;
 
     fn cross(&self, individual: &TIndividual, partner: &TIndividual) -> Box<TIndividual>;
 
@@ -30,8 +32,8 @@ pub trait IBehaviour<TMutation: IMutation, TIndividual: IIndividual<TMutation>>:
     fn get_context<'a>(&'a self) -> &'a Context;
 
     fn score_cmp(&self, a: &TIndividual, b: &TIndividual) -> Ordering {
-        let a_total = self.get_score(a);
-        let b_total = self.get_score(b);
+        let a_total = self.calculate_score(a);
+        let b_total = self.calculate_score(b);
 
         b_total.partial_cmp(&a_total).unwrap()
     }
@@ -40,15 +42,19 @@ pub trait IBehaviour<TMutation: IMutation, TIndividual: IIndividual<TMutation>>:
 pub struct Context {
     pub mutations_count: usize,
     pub population_size: usize,
-    pub children_count: u16,
-    pub generations_count: u16,
+    pub children_count: u32,
+    pub generations_count: u32,
     pub results_count: usize,
     pub left_count: usize,
-    pub repeats_count: u16,
+    pub repeats_count: u8,
 }
 
 impl Context {
     pub fn new(settings: &CliSettings) -> Self {
+        if settings.mutations_count <= 0 {
+            panic!("Invalid mutations count.")
+        }
+
         Context {
             mutations_count: settings.mutations_count as usize,
             population_size: settings.population_size as usize,
