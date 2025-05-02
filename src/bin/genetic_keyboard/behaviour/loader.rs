@@ -49,11 +49,11 @@ const MAX_VALUE: f64 = 5.;
 fn normalize_effort(value: f64, factor: f64) -> f64 {
     debug_assert!(
         value >= MIN_VALUE,
-        format!("Minimal allowed value is {}", MIN_VALUE)
+        "Minimal allowed value is {}", MIN_VALUE
     );
     debug_assert!(
         value <= 5.,
-        format!("Maximal allowed value is {}", MAX_VALUE)
+        "Maximal allowed value is {}", MAX_VALUE
     );
 
     (value - 1.) * factor + 1.

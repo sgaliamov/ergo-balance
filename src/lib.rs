@@ -1,5 +1,5 @@
-pub mod models;
 pub mod genetic;
+pub mod models;
 
-pub use models::*;
 pub use genetic::*;
+pub use models::*;
